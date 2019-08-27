@@ -1,0 +1,9 @@
+.pencil-button {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: #0088cc;
+}
+
+.pencil-form textarea {
+    height: 200px;
+}

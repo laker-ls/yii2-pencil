@@ -1,0 +1,25 @@
+{
+    "name": "laker-ls/yii2-pencil",
+    "description": "Module create and view interactive text.",
+    "keywords": ["yii2", "extension", "module"],
+    "homepage": "https://github.com/laker-ls/pencil",
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Владислав Сусып",
+            "email": "vladislav_susyp@bk.ru",
+            "homepage": "https://github.com/laker-ls"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "lakerLS\\pencil\\": "src"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
