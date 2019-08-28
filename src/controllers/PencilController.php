@@ -7,6 +7,7 @@ use lakerLS\pencil\models\PencilSearch;
 use Yii;
 use yii\bootstrap4\Html;
 use yii\web\Controller;
+use developeruz\db_rbac\behaviors\AccessBehavior;
 
 /**
  * Контроллер для 'pencil' модуля.
@@ -15,6 +16,24 @@ use yii\web\Controller;
 class PencilController extends Controller
 {
     public $layout = false;
+
+    // Доступ только для пользователей с ролью 'admin'.
+    public function behaviors()
+    {
+        return [
+            'as AccessBehavior' => [
+                'class' => AccessBehavior::class,
+                'rules' => [
+                    'pencil/pencil' => [
+                        [
+                            'allow' => true,
+                            'roles' => Yii::$app->getModule('pencil')->params['accessRoles'],
+                        ],
+                    ]
+                ]
+            ],
+        ];
+    }
 
     /**
      * Отображение формы для редактирования/создания модели.
@@ -44,7 +63,6 @@ class PencilController extends Controller
         $model = $this->findModel($pencil['id_name'], $pencil['category_id']);
         if ($model->load($post) && $model->save()) {
             Yii::$app->cache->flush();
-
             return $pencil['text'];
         }
     }
@@ -64,7 +82,6 @@ class PencilController extends Controller
             $activeRecord->id_name = $id;
             $activeRecord->category_id = $category_id;
         }
-
         return $activeRecord;
     }
 }

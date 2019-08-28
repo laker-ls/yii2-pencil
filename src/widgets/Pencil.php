@@ -112,7 +112,7 @@ class Pencil extends Widget
             $lineBreak = str_replace(["\r\n", "\r", "\n"], '<br />', $model->text);
         }
 
-        if (Yii::$app->user->can($this->role)) {
+        if ($this->checkPermission()) {
             $text = !empty($model->text) ? $lineBreak : $this->textIsEmpty;
             return Html::tag($this->tag, $text, $this->glueArray($this->optionsAdmin, $this->options));
         } else {
@@ -140,10 +140,23 @@ class Pencil extends Widget
             } else {
                 $options[$key] = ArrayHelper::getValue($main, $key);
             }
-
         }
-
         return $options;
+    }
+
+    /**
+     * Проверка доступа роли.
+     * @return boolean
+     */
+    private function checkPermission()
+    {
+        $roles = Yii::$app->getModule('pencil')->params['accessRoles'];
+        foreach ($roles as $role) {
+            if (Yii::$app->user->can($role)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -160,7 +173,6 @@ class Pencil extends Widget
                 $result = $record;
             }
         }
-
         return isset($result) ? $result : [];
     }
 }
