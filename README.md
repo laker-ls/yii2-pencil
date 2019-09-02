@@ -29,13 +29,13 @@
 Для установки запустите
 
 ```
-$ php composer.phar require laker-ls/yii2-pencil "~1.1.0"
+$ php composer.phar require laker-ls/yii2-pencil "~1.2.0"
 ```
 
 или добавьте в `composer.json` в раздел `require` следующую строку
 
 ```
-"laker-ls/yii2-pencil": "~1.1.0"
+"laker-ls/yii2-pencil": "~1.2.0"
 ```
 
 > Смотрите [список изменений](https://github.com/laker-ls/yii2-pencil/blob/master/CHANGE.md) для подробной информации о версиях.
@@ -78,16 +78,16 @@ yii migrate --migrationPath=@lakerLS/pencil/migrations
 ## Использование виджета для текста
 
 ```php
-use lakerLS\pencil\widgets\Pencil;
+use lakerLS\pencil\widgets\PencilText;
            
-<?= Pencil::widget(['id' => 'example-id']) ?>
+<?= PencilText::widget(['id' => 'example-id']) ?>
 ```
 
 С использованием дополнительных параметров:
 ```php
 use lakerLS\pencil\widgets\Pencil;
            
-<?= Pencil::widget(['id' => 'example-id', 'tag' => 'h2', 'options' => ['class' => 'my-class']]) ?>
+<?= PencilText::widget(['id' => 'example-id', 'tag' => 'h2', 'options' => ['class' => 'my-class']]) ?>
 ```
 
 `id` - (string) обязательный параметр, для удобства, id указывать строкой. Необходимы уникальные имена в пределах одной страницы.
@@ -109,8 +109,7 @@ use lakerLS\pencil\widgets\Pencil;
 Используйте `Image::arrayImg()` для получения массива с изображениями для последующего отображения.
 
 ```php
-use yii\bootstrap4\Html;
-use lakerLS\pencil\widgets\Pencil;
+use lakerLS\pencil\widgets\PencilImage;
  
  foreach (Image::arrayImg(['group' => 'Новости']) as $image) {
     echo Html::img($image->src, ['alt' => $image->alt]);
