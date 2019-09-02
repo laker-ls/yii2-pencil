@@ -16,10 +16,10 @@ use lakerLS\pencil\traits\AccessWidgetTrait;
  * Заданный порядок будет сохранен и отображен соответствующе. Порядок может быть задан вне зависимости от того,
  * было ли изображение уже загружено или нет.
  *
- * Class Image
+ * Class PencilImage
  * @package lakerLS\pencil\widgets
  */
-class Image extends Widget
+class PencilImage extends Widget
 {
     use AccessWidgetTrait;
 

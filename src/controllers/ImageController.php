@@ -62,8 +62,8 @@ class ImageController extends Controller
                 $model->src = $model->upload();
                 $model->alt = $image->baseName;
                 $model->position = $post['Position'][$image->name];
-                if (!$model->save()) {
-                    var_dump($model->errors);
+                if ($model->save()) {
+                    Yii::$app->cache->flush();
                 }
             }
 
@@ -72,7 +72,9 @@ class ImageController extends Controller
             foreach ($activeRecords as $model) {
                 $fullName = self::fullName($model);
                 $model->position = $post['Position'][$fullName];
-                $model->update();
+                if ($model->update()) {
+                    Yii::$app->cache->flush();
+                }
             }
 
             return $this->goBack();
@@ -88,6 +90,7 @@ class ImageController extends Controller
         $id = mb_substr(mb_strstr($id, '-'), 1, mb_strlen($id));
 
         Image::findOne($id)->delete();
+        Yii::$app->cache->flush();
     }
 
     /**

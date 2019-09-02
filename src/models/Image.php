@@ -72,6 +72,7 @@ class Image extends ActiveRecord
         $model = self::find()
             ->where(['group' => $group])
             ->orderBy(['position' => SORT_ASC])
+            ->cache()
             ->all();
 
         return $model;

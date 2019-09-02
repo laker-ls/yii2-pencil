@@ -30,10 +30,10 @@ use yii\helpers\ArrayHelper;
  *          return $this->render('view');
  *      }
  *
- * Class Text
+ * Class PencilText
  * @package lakerLS\pencil\widgets
  */
-class Text extends Widget
+class PencilText extends Widget
 {
     use AccessWidgetTrait;
 
