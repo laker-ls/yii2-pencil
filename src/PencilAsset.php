@@ -1,6 +1,6 @@
 <?php
 
-namespace lakerLS\pencil\assets;
+namespace lakerLS\pencil;
 
 use yii\web\AssetBundle;
 use yii\web\View;
@@ -14,14 +14,17 @@ class PencilAsset extends AssetBundle
     public $sourcePath = '@lakerLS/pencil/assets';
     public $jsOptions = ['position' => View::POS_END];
     public $css = [
+        '//ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/sunny/jquery-ui.min.css',
         'css/pencil.css',
     ];
     public $js = [
-        'js/pencil.js',
+        '//ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js',
+        'js/pencil-text.js',
+        'js/pencil-image.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
         'yii\bootstrap4\BootstrapAsset',
-        'yii\web\YiiAsset',
+        'yii\bootstrap4\BootstrapPluginAsset',
     ];
 }

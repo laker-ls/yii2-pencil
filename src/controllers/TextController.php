@@ -2,42 +2,31 @@
 
 namespace lakerLS\pencil\controllers;
 
-use lakerLS\pencil\models\PencilModel;
-use lakerLS\pencil\models\PencilSearch;
+use lakerLS\pencil\models\Text;
+use lakerLS\pencil\traits\AccessTrait;
 use Yii;
-use yii\bootstrap4\Html;
+use yii\db\Exception;
 use yii\web\Controller;
-use developeruz\db_rbac\behaviors\AccessBehavior;
 
 /**
- * Контроллер для 'pencil' модуля.
+ * Контроллер для 'Text' модели.
  * Все экшены рассчитаны на работу через ajax.
  */
-class PencilController extends Controller
+class TextController extends Controller
 {
-    public $layout = false;
+    use AccessTrait;
 
-    // Доступ только для пользователей с ролью 'admin'.
-    public function behaviors()
+    protected function controllerName()
     {
-        return [
-            'as AccessBehavior' => [
-                'class' => AccessBehavior::class,
-                'rules' => [
-                    'pencil/pencil' => [
-                        [
-                            'allow' => true,
-                            'roles' => Yii::$app->getModule('pencil')->params['accessRoles'],
-                        ],
-                    ]
-                ]
-            ],
-        ];
+        return 'text';
     }
+
+    public $layout = false;
 
     /**
      * Отображение формы для редактирования/создания модели.
      * @param string $id
+     * @param integer $category_id
      * @return string
      */
     public function actionIndex($id, $category_id)
@@ -52,18 +41,20 @@ class PencilController extends Controller
     /**
      * Создание или редактирование модели.
      *
-     * @param string $id
      * @return string
+     * @throws Exception
      */
     public function actionCreateUpdate()
     {
         $post = Yii::$app->request->post();
-        $pencil = $post['PencilModel'];
+        $pencil = $post['Text'];
 
         $model = $this->findModel($pencil['id_name'], $pencil['category_id']);
         if ($model->load($post) && $model->save()) {
             Yii::$app->cache->flush();
             return $pencil['text'];
+        } else {
+            throw new Exception('Ошибка при записи в базу данных. Проверьте корректность данных POST.');
         }
     }
 
@@ -72,16 +63,16 @@ class PencilController extends Controller
      *
      * @param string $id
      * @param null|integer $category_id
-     * @return ActiveRecord
+     * @return array|Text
      */
     private function findModel($id, $category_id = null)
     {
-        $activeRecord = PencilModel::findOne(['id_name' => $id]);
-        if (empty($activeRecord) && !empty($category_id)) {
-            $activeRecord = new PencilModel();
-            $activeRecord->id_name = $id;
-            $activeRecord->category_id = $category_id;
+        $model = Text::findOne(['id_name' => $id]);
+        if (empty($model) && !empty($category_id)) {
+            $model = new Text();
+            $model->id_name = $id;
+            $model->category_id = $category_id;
         }
-        return $activeRecord;
+        return $model;
     }
 }

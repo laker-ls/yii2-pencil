@@ -1,17 +1,17 @@
 <?php
 
-use lakerLS\pencil\models\PencilModel;
+use lakerLS\pencil\models\Text;
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
 
-/** @var PencilModel $model */
+/** @var Text $model */
 ?>
-<div class="modal fade" id="modal-pencil" tabindex="-1" role="dialog" aria-labelledby="modal-pencil" aria-hidden="true">
+<div class="modal fade" id="modal-pencil-text" tabindex="-1" role="dialog" aria-labelledby="modal-pencil" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <?php
         $form = ActiveForm::begin([
             'method' => 'post',
-            'action' => '/pencil/pencil/create-update',
+            'action' => '/pencil/text/create-update',
             'options' => ['class' => 'pencil-form']
         ]);
         ?>

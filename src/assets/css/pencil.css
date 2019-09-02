@@ -1,3 +1,5 @@
+/************** Текст *********************/
+
 .pencil-button {
     cursor: pointer;
     text-decoration: underline;
@@ -6,4 +8,101 @@
 
 .pencil-form textarea {
     height: 200px;
+}
+
+/************** Галеря ********************/
+
+.pencil-gallery {
+    margin: 20px 0;
+}
+
+.pencil-gallery a {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 3px;
+    transition: 300ms;
+}
+
+.pencil-gallery a:hover {
+    background: #0069d9;
+}
+
+#modal-pencil-image .preview {
+    margin: 0;
+    padding: 11px;
+    border: 1px dashed #00000040;
+    border-radius: 5px;
+}
+
+#modal-pencil-image .preview .cart {
+    text-align: center;
+    margin: 11px;
+    padding: 0 10px 10px;
+    max-width: 23%;
+    border: 1px solid #00000040;
+    box-shadow: 0 0 5px #00000036;
+    background-color: white;
+}
+
+#modal-pencil-image .preview .delete {
+    text-align: right;
+}
+
+#modal-pencil-image .preview .delete a {
+    text-decoration: none;
+    color: black;
+}
+
+#modal-pencil-image .preview p {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: #212529;
+}
+
+#modal-pencil-image .preview .pre-load {
+    padding-top: 25px;
+}
+
+#modal-pencil-image .preview .success {
+    background: #f0fff0;
+    box-shadow: 0 0 5px 0 #00a900f5;
+}
+
+#modal-pencil-image .preview .error {
+    background: #fff0f0;
+    box-shadow: 0 0 5px 0 #a90000f5;
+}
+
+#modal-pencil-image .modal-footer .action {
+    text-align: right;
+}
+
+#modal-pencil-image .modal-footer .action div {
+    position: absolute;
+    top: 0;
+    font-size: 22px;
+    color: #e00000;
+}
+
+#modal-pencil-image .modal-footer .new-input {
+    background-color: #28a745;
+    color: white;
+    width: 210px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 7px 0;
+    transition: 300ms;
+}
+
+#modal-pencil-image .modal-footer .default-input{
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 210px;
+    -moz-opacity: 0;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    height: 38px;
 }

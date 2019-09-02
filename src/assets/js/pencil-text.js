@@ -1,5 +1,6 @@
 $(document).ready(function () {
     let ajax = new AjaxPencil();
+
     ajax.index();
 });
 
@@ -9,23 +10,22 @@ class AjaxPencil {
     index() {
         let self = this;
 
-        $('[data-modal="pencil"]').on("click", function () {
+        $('[data-modal="pencil-text"]').on("click", function () {
             let data = {
                 "id": $(this).attr("data-id"),
                 "category_id": $(this).attr("data-category"),
             };
 
-            $.ajax({url: "/pencil/pencil/index", type: "get", data: data}).done(
+            $.ajax({url: "/pencil/text/index", type: "get", data: data}).done(
                 (result) => {
-                    let modalPencil = $("#modal-pencil");
-                    if (modalPencil.length === 1) {
-                        modalPencil.remove();
-                    }
-                    $("body").append(result);
-                    modalPencil = $("#modal-pencil");
+                    let modal = $(result);
 
-                    modalPencil.modal("show");
-                    self.record($(this), modalPencil);
+                    modal.modal("show");
+                    self.record($(this), modal);
+
+                    modal.on("hidden.bs.modal", function () {
+                        $(this).remove();
+                    });
                 }
             );
         });

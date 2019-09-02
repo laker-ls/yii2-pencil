@@ -2,14 +2,12 @@
 
 namespace lakerLS\pencil\widgets;
 
-use lakerLS\pencil\assets\PencilAsset;
-use lakerLS\pencil\models\PencilModel;
-use lakerLS\pencil\models\PencilSearch;
+use lakerLS\pencil\PencilAsset;
+use lakerLS\pencil\models\Text as TextModel;
+use lakerLS\pencil\traits\AccessWidgetTrait;
 use yii\base\Widget;
 use yii\bootstrap4\Html;
-use yii\bootstrap4\Modal;
 use yii\helpers\ArrayHelper;
-use Yii;
 
 /**
  * Отображение текста, которое редактируется через модальное окно, когда пользователь авторизован как администратор.
@@ -32,11 +30,13 @@ use Yii;
  *          return $this->render('view');
  *      }
  *
- * Class Pencil
+ * Class Text
  * @package lakerLS\pencil\widgets
  */
-class Pencil extends Widget
+class Text extends Widget
 {
+    use AccessWidgetTrait;
+
     /**
      * Обязательный параметр, для удобства, id указывать строкой. Необходимы уникальные имена в пределах одной страницы.
      * Повторное использование имен на других страницах не вызовет конфликта.
@@ -75,14 +75,6 @@ class Pencil extends Widget
     public $textIsEmpty = 'Добавить текст';
 
     /**
-     * Для работы расширения необходим RBAC. Данным параметром передается роль, которой мы хотим открыть доступ
-     * к возможности редактирования записи.
-     *
-     * @param string $role
-     */
-    public $role = 'admin';
-
-    /**
      * Подключение необходимых css и js.
      * Формируем уникальный id из url и $id.
      * Добавляем к $optionsAdmin обязательные атрибуты.
@@ -92,10 +84,11 @@ class Pencil extends Widget
         parent::init();
         PencilAsset::register($this->view);
 
+        /** @var object $this->view->context->meta */
         $currentCategory = $this->view->context->meta->id;
         $this->id = $currentCategory . '-' . $this->id;
 
-        $defaultAdmin = ['data-modal' => 'pencil', 'data-id' => $this->id, 'data-category' => $currentCategory];
+        $defaultAdmin = ['data-modal' => 'pencil-text', 'data-id' => $this->id, 'data-category' => $currentCategory];
         $this->optionsAdmin = array_merge($defaultAdmin, $this->optionsAdmin);
     }
 
@@ -106,17 +99,20 @@ class Pencil extends Widget
      */
     public function run()
     {
-        $model = $this->findModel();
+        $model = new TextModel();
+
+        /** @var object $this->view->context->meta */
+        $model = $model->findModel($this->view->context->meta->id, $this->id);
 
         if (!empty($model->text)) {
             $lineBreak = str_replace(["\r\n", "\r", "\n"], '<br />', $model->text);
         }
 
         if ($this->checkPermission()) {
-            $text = !empty($model->text) ? $lineBreak : $this->textIsEmpty;
+            $text = isset($lineBreak) ? $lineBreak : $this->textIsEmpty;
             return Html::tag($this->tag, $text, $this->glueArray($this->optionsAdmin, $this->options));
         } else {
-            return !empty($model->text) ? Html::tag($this->tag, $lineBreak, $this->options) : null;
+            return isset($lineBreak) ? Html::tag($this->tag, $lineBreak, $this->options) : null;
         }
     }
 
@@ -142,37 +138,5 @@ class Pencil extends Widget
             }
         }
         return $options;
-    }
-
-    /**
-     * Проверка доступа роли.
-     * @return boolean
-     */
-    private function checkPermission()
-    {
-        $roles = Yii::$app->getModule('pencil')->params['accessRoles'];
-        foreach ($roles as $role) {
-            if (Yii::$app->user->can($role)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Ищем необходимую модель.
-     * Производится запрос, которым получаются все записи для текущей страницы, после чего кэшируется.
-     *
-     * @return array|\yii\db\ActiveRecord
-     */
-    private function findModel()
-    {
-        $records = PencilModel::find()->where(['category_id' => $this->view->context->meta->id])->cache()->all();
-        foreach ($records as $record) {
-            if ($record->id_name == $this->id) {
-                $result = $record;
-            }
-        }
-        return isset($result) ? $result : [];
     }
 }
