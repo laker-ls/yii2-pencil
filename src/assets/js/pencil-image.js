@@ -45,7 +45,7 @@ class AjaxGallery {
     sortable(modal) {
         let container = modal.find(".preview");
 
-        container.sortable({"containment": "parent"});
+        container.sortable({"containment": "parent", "tolerance": "pointer", "scroll": false});
         this.submitForm(modal);
     }
 

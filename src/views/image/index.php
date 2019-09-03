@@ -23,7 +23,7 @@ use yii\bootstrap4\Html;
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="preview row">
+                    <div class="preview">
                         <?php foreach ($model as $image) : ?>
                             <?php if (!empty($image->src)) : ?>
                                 <div id="image-<?= $image->id ?>" class="col-lg-3 cart" data-position="<?= $image->position ?>">
