@@ -36,7 +36,9 @@ class PencilImage extends Widget
     public function init()
     {
         parent::init();
-        PencilAsset::register($this->view);
+        if ($this->checkPermission()) {
+            PencilAsset::register($this->view);
+        }
     }
 
     /**

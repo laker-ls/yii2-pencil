@@ -82,7 +82,9 @@ class PencilText extends Widget
     public function init()
     {
         parent::init();
-        PencilAsset::register($this->view);
+        if ($this->checkPermission()) {
+            PencilAsset::register($this->view);
+        }
 
         /** @var object $this->view->context->meta */
         $currentCategory = $this->view->context->meta->id;
