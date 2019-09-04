@@ -82,6 +82,7 @@ class PencilText extends Widget
     public function init()
     {
         parent::init();
+
         if ($this->checkPermission()) {
             PencilAsset::register($this->view);
         }
