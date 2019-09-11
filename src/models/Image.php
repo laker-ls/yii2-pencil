@@ -86,7 +86,7 @@ class Image extends ActiveRecord
     public function upload()
     {
         if (!empty($this->image)) {
-            $nameImg = $this->uniqueName($this->image);;
+            $nameImg = $this->uniqueName($this->image);
             $folder = substr($nameImg, 0, 2);
             $path = Yii::$app->getModule('pencil')->params['imagePath'] . '/' . $folder;
 

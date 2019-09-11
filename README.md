@@ -54,8 +54,8 @@ yii migrate --migrationPath=@lakerLS/pencil/migrations
         'class' => '\lakerLS\pencil\Module',
         'params' => [
             'accessRoles' => ['admin'],
-            'imagePath' => 'upload/image-gallery,
-        ]
+            'imagePath' => 'upload/image-gallery',
+        ],
     ],
 ]
 ```
