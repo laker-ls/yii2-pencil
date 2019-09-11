@@ -42,19 +42,19 @@ class PencilText extends Widget
      * Повторное использование имен на других страницах не вызовет конфликта.
      * ПРИМЕР: ['id' => 'title-main']
      *
-     * @param string $id
+     * @var string $id
      */
     public $id;
 
     /**
      * Имя тега, в котором будет содержимое.
-     * @param string $tag
+     * @var string $tag
      */
     public $tag = 'p';
 
     /**
      * Параметры тега, которые видны как всем пользователям, так и администратору.
-     * @param array $options
+     * @var array $options
      */
     public $options = [];
 
@@ -62,7 +62,7 @@ class PencilText extends Widget
      * Параметры тега, которые видет только администратор. С помощью классов и стилей задается такой стиль текста,
      * что бы было понятно, что он интерактивен (можно редактировать). По умолчанию синее подчеркивание.
      *
-     * @param array $optionsAdmin
+     * @var array $optionsAdmin
      */
     public $optionsAdmin = ['class' => 'pencil-button'];
 
@@ -70,7 +70,7 @@ class PencilText extends Widget
      * Текст, который виден только администратору, если содержимое пусто или не существует,
      * для возможности редактирования.
      *
-     * @param string $textIsEmpty
+     * @var string $textIsEmpty
      */
     public $textIsEmpty = 'Добавить текст';
 

@@ -25,9 +25,23 @@ class PencilImage extends Widget
 
     /**
      * Обязательный параметр. Все изображения должны быть объеденены в альбомы.
-     * @param string $group
+     * @var string $group
      */
     public $group;
+
+    /**
+     * Необязательный параметр.
+     * Если значение `false`, отображается большая кнопка для редактирования. Подходит для создания/редактирования
+     * альбомов.
+     * Если значение `true`, кнопка имеет маленький размер и позицию absolute. Подходит для создания/редактирования
+     * одного изображения, кнопка не будет "ломать" верстку.
+     *
+     * ВАЖНО: используя значение `true` обязательно указывайте родительскому элементу в котором расположено изображение
+     * позицию `relative`.
+     *
+     * @var boolean $small
+     */
+    public $small = false;
 
     /**
      * Подключение необходимых css и js.
@@ -47,12 +61,24 @@ class PencilImage extends Widget
     public function run()
     {
         if ($this->checkPermission()) {
-            echo Html::beginTag('div', ['class' => 'pencil-gallery']);
+            if ($this->small === false) {
+                echo Html::beginTag('div', ['class' => 'pencil-gallery']);
                 echo Html::a('Изменить изображения', '#', [
                     'data-modal' => 'pencil-image',
                     'data-group' => $this->group,
+                    'class' => 'big-gallery-button'
                 ]);
-            echo Html::endTag('div');
+                echo Html::endTag('div');
+            } elseif($this->small === true) {
+                echo Html::a('+', '#', [
+                    'data-modal' => 'pencil-image',
+                    'data-group' => $this->group,
+                    'class' => 'small-gallery-button'
+                ]);
+            } else {
+                throw new \Exception('Передано некорректное значение для свойства "small"');
+            }
+
         }
     }
 

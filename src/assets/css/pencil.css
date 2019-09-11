@@ -16,7 +16,7 @@
     margin: 20px 0;
 }
 
-.pencil-gallery a {
+.big-gallery-button {
     background: #007bff;
     color: white;
     text-decoration: none;
@@ -25,8 +25,25 @@
     transition: 300ms;
 }
 
-.pencil-gallery a:hover {
+.big-gallery-button:hover {
     background: #0069d9;
+}
+
+.small-gallery-button {
+    color: white !important;
+    background: #007bff !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    text-align: center !important;
+    border-radius: 3px !important;
+    transition: 300ms !important;
+}
+
+.small-gallery-button:hover {
+    background: #0069d9 !important;
 }
 
 #modal-pencil-image .preview {

@@ -88,14 +88,18 @@ class Image extends ActiveRecord
         if (!empty($this->image)) {
             $nameImg = $this->uniqueName($this->image);
             $folder = substr($nameImg, 0, 2);
-            $path = Yii::$app->getModule('pencil')->params['imagePath'] . '/' . $folder;
+            $rootPath = Yii::$app->getModule('pencil')->params['imagePath'];
+            $pathImg = $rootPath . '/' . $folder;
 
-            if (!is_dir($path)) {
-                mkdir($path, 0777);
+            if (!is_dir($rootPath)) {
+                mkdir($rootPath, 0777, true);
+            }
+            if (!is_dir($pathImg)) {
+                mkdir($pathImg, 0777);
             }
 
-            $this->image->saveAs($path . '/' . $nameImg);
-            return '/' . $path . '/' . $nameImg;
+            $this->image->saveAs($pathImg . '/' . $nameImg);
+            return '/' . $pathImg . '/' . $nameImg;
         } else {
             return false;
         }

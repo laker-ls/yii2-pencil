@@ -29,13 +29,13 @@
 Для установки запустите
 
 ```
-$ php composer.phar require laker-ls/yii2-pencil "~1.2.1"
+$ php composer.phar require laker-ls/yii2-pencil "~1.2.2"
 ```
 
 или добавьте в `composer.json` в раздел `require` следующую строку
 
 ```
-"laker-ls/yii2-pencil": "~1.2.1"
+"laker-ls/yii2-pencil": "~1.2.2"
 ```
 
 > Смотрите [список изменений](https://github.com/laker-ls/yii2-pencil/blob/master/CHANGE.md) для подробной информации о версиях.
@@ -108,18 +108,41 @@ use lakerLS\pencil\widgets\Pencil;
 Используйте `Image::widget()` для отображения кнопки редактирования. <br />
 Используйте `Image::arrayImg()` для получения массива с изображениями для последующего отображения.
 
+Стандартное использование, которое подходит для отображения коллекций изображений:
+
 ```php
 use lakerLS\pencil\widgets\PencilImage;
  
- foreach (Image::arrayImg(['group' => 'Новости']) as $image) {
+ <?php
+ foreach (PencilImage::arrayImg(['group' => 'Новости']) as $image) {
     echo Html::img($image->src, ['alt' => $image->alt]);
  }
- 
- echo Image::widget(['group' => 'Новости']);
+ echo PencilImage::widget(['group' => 'Новости']);
+ ?>
+```
+Альтернативное использование, которое подходит для отображения одного изображения, при этом не влияя на верстку
+(не добавляет лишние отступы, отображается на изображении в нижнем правом углу).
+
+В каждом конкретном случае используйте свои html теги, которые используются в шаблоне:
+> ВАЖНО: используя значение `true` для параметра `small` обязательно указывайте родительскому элементу в котором 
+расположено изображение позицию `relative`.
+
+```html
+<?php foreach (PencilImage::arrayImg(['group' => 'Новости']) as $image) : ?>
+    <div class="example" style="position: relative">
+        <?= Html::img($image->src, ['alt' => $image->alt]) ?>
+    </div>
+    <?= PencilImage::widget(['group' => 'Новости', 'small' => true]) ?>
+<?php endforeach; ?>
 ```
 
-group - единственный и обязательный параметр, который необходимо передавать для создания альбома изображений.
+`group` (string) - обязательный параметр, который необходимо передавать для создания альбома изображений.
 Может использоваться кириллица.
+
+`small` (boolean) - Необязательный параметр. По умолчанию `false`.<br />
+Если значение `false`, отображается большая кнопка для редактирования. 
+Подходит для создания/редактирования альбомов. <br />
+Если значение `true`, кнопка имеет маленький размер и позицию absolute. 
 
 ## Лицензия
 
