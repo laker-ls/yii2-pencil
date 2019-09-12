@@ -26,10 +26,10 @@ class TextController extends Controller
     /**
      * Отображение формы для редактирования/создания модели.
      * @param string $id
-     * @param integer $category_id
+     * @param null|integer $category_id
      * @return string
      */
-    public function actionIndex($id, $category_id)
+    public function actionIndex($id, $category_id = null)
     {
         $model = $this->findModel($id, $category_id);
 
@@ -68,7 +68,7 @@ class TextController extends Controller
     private function findModel($id, $category_id = null)
     {
         $model = Text::findOne(['id_name' => $id]);
-        if (empty($model) && !empty($category_id)) {
+        if (empty($model)) {
             $model = new Text();
             $model->id_name = $id;
             $model->category_id = $category_id;

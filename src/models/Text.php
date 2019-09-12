@@ -27,7 +27,7 @@ class Text extends ActiveRecord
     public function rules()
     {
         return [
-            [['id_name', 'category_id'], 'required'],
+            [['id_name'], 'required'],
             [['category_id'], 'integer'],
             [['text'], 'string'],
             [['id_name'], 'string', 'max' => 60],
@@ -55,10 +55,11 @@ class Text extends ActiveRecord
      * @param string $idName
      * @return array|ActiveRecord
      */
-    public function findModel($categoryId, $idName)
+    public function findModel($categoryId = null, $idName)
     {
         $records = self::find()
             ->where(['category_id' => $categoryId])
+            ->orWhere(['category_id' => null])
             ->cache()
             ->all();
 

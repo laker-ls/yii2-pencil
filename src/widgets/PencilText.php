@@ -18,15 +18,19 @@ use yii\helpers\ArrayHelper;
  * Вы можете настраивать в каком теге выводить текст и передавать ему классы и другие атрибуты.
  * Вид текста для администратора отличается и может быть дополнен атрибутами, которые выводят только для админа.
  *
- * В контроллере, в котором вызывается экшен с карандашами обязательно должно передаваться свойством экземляр текущей
- * категории.
+ * В контроллере, в котором вызывается экшен с карандашами обязательно должно передаваться свойством id категории.
  *
  * ПРИМЕР:
- *      public $meta;
+ *      public $categoryId;
  *
  *      public function actionIndex()
  *      {
- *          $this->meta = Category::findOne($id);
+ *          // Где $category объект текущей категории.
+ *          $this->categoryId = $category->id;
+ *
+ *          // Если страница статическая, то можем задать `id` явно, но данный способ не является хорошей практикой.
+ *          $this->categoryId = 1;
+ * 
  *          return $this->render('view');
  *      }
  *
@@ -59,6 +63,12 @@ class PencilText extends Widget
     public $options = [];
 
     /**
+     * Для размещение текста в `layout` необходимо передать его имя.
+     * @var string $layout
+     */
+    public $layout;
+
+    /**
      * Параметры тега, которые видет только администратор. С помощью классов и стилей задается такой стиль текста,
      * что бы было понятно, что он интерактивен (можно редактировать). По умолчанию синее подчеркивание.
      *
@@ -87,9 +97,13 @@ class PencilText extends Widget
             PencilAsset::register($this->view);
         }
 
-        /** @var object $this->view->context->meta */
-        $currentCategory = $this->view->context->meta->id;
-        $this->id = $currentCategory . '-' . $this->id;
+        if (empty($this->layout)) {
+            $currentCategory = $this->view->context->categoryId;
+            $this->id = $currentCategory . '-' . $this->id;
+        } else {
+            $currentCategory = null;
+            $this->id = $this->layout . '-' . $this->id;
+        }
 
         $defaultAdmin = ['data-modal' => 'pencil-text', 'data-id' => $this->id, 'data-category' => $currentCategory];
         $this->optionsAdmin = array_merge($defaultAdmin, $this->optionsAdmin);
@@ -103,9 +117,7 @@ class PencilText extends Widget
     public function run()
     {
         $model = new TextModel();
-
-        /** @var object $this->view->context->meta */
-        $model = $model->findModel($this->view->context->meta->id, $this->id);
+        $model = $model->findModel($this->view->context->categoryId, $this->id);
 
         if (!empty($model->text)) {
             $lineBreak = str_replace(["\r\n", "\r", "\n"], '<br />', $model->text);
