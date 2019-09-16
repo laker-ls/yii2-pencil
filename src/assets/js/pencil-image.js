@@ -6,10 +6,6 @@ $(document.body).ready(function () {
 
 /**
  * Класс реализует работу с изображениями (crud) в модальном окне.
- *
- * Отображение формы - ajax.
- * Загрузка изображений на сервер (отправка формы) - not ajax.
- * Удаление изображений - ajax.
  */
 class AjaxGallery {
 
@@ -21,6 +17,8 @@ class AjaxGallery {
             event.preventDefault();
             let data = {
                 "group": $(this).attr("data-group"),
+                "width": $(this).attr("data-width"),
+                "height": $(this).attr("data-height"),
             };
 
             $.ajax({url: "/pencil/image/index", type: "get", data: data}).done(
@@ -113,24 +111,39 @@ class AjaxGallery {
 
     /**
      * Отправка формы. По нажатию на кнопку отправки создаются инпуты для сохранения позиции в базе данных.
-     * Отправка изображений через ajax НЕ реализована.
      */
     submitForm(modal) {
-        let submitButton = modal.find("[type='submit']");
+        let self = this;
+        let form = modal.find("form");
 
-        submitButton.click(function() {
+        form.on("submit", function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
             let uploadImg = modal.find(".preview").find(".cart");
 
-            uploadImg.each(function (index, img) {
+            uploadImg.each(function (key, img) { // Добавляем в массив данные о позиции каждого изображения.
                 let nameImg = $(img).find(".name-img").text();
 
-                $(img).attr({"data-position": [index + 1]});// Пригодится в реализации через ajax сохранение изображений
-
-                modal.find(".modal-body").append(
-                    '<input type="hidden" name="Position[' + nameImg + ']" value="' + [index + 1] + '" />'
-                );
+                formData.set("Position", nameImg);
+                formData.set("Position[" + nameImg + "]", key + 1);
             });
-        })
+
+            $.ajax({
+                url: "/pencil/image/create-update",
+                type: "post",
+                processData: false,
+                contentType: false,
+                data: formData,
+                dataType: "json",
+            }).done(
+                (result) => {
+                    let group = result[0].group;
+
+                    self.refreshDisplayImg(result, group);
+                    modal.modal("hide");
+                }
+            )
+        });
     }
 
     /**
@@ -139,22 +152,43 @@ class AjaxGallery {
      * рекомендуется нажимать отправку формы, для обновления страницы.
      */
     deleteImg(modal) {
+        let self = this;
         let del = modal.find(".preview").find(".delete").find("a");
 
         del.on("click", function (event) {
             event.preventDefault();
-            let parent = $(this).closest(".cart");
-            let data = {"id": parent.attr("id")};
             let accept = confirm('Вы действительно хотите удалить изображение?');
+            let parent = $(this).closest(".cart");
+            let data = {"id": parent.attr("id"), "group": parent.attr("data-group")};
+            let group = parent.attr("data-group");
 
             if(accept) {
-                $.ajax({url: "/pencil/image/delete", type: "post", data}).done (
-                    () => {
-                        parent.remove();
+                $.ajax({url: "/pencil/image/delete", type: "post", data: data, dataType: "json"}).done (
+                    (result) => {
+                        self.refreshDisplayImg(result, group);
+                        parent.remove(); // удаление изображения из модального окна.
                     }
                 );
             }
-        })
+        });
+    }
+
+    /**
+     * Отображение новых изображений, после загрузки/удаления изображений.
+     * Все изображения текущей группы удаляются и загружаются вновь через ajax.
+     */
+    refreshDisplayImg(result, group) {
+        let container = $("[data-target='example-" + group + "']");
+        let button = $('[data-modal="pencil-image"][data-group="' + group + '"]');
+
+        container.nextUntil('[data-modal="pencil-image"]').remove();
+
+        $(result).each(function (key, img) { // берем шаблон из html, заполняем его и дублируем в нужное место.
+            let template = $('[data-target="example-' + img.group + '"]');
+
+            template.find("img").attr({"src": img.mini, "alt": img.alt});
+            container.after(template.html());
+        });
     }
 
     /** Стилизация кнопки для выбора изображений. */

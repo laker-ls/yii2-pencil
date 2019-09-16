@@ -2,12 +2,11 @@
 
 namespace lakerLS\pencil\widgets;
 
+use lakerLS\pencil\models\Image;
 use lakerLS\pencil\PencilAsset;
-use lakerLS\pencil\models\Image as ImageModel;
 use yii\base\Widget;
 use yii\bootstrap4\Html;
 use lakerLS\pencil\traits\AccessWidgetTrait;
-use yii\helpers\ArrayHelper;
 
 /**
  * Отображение изображений, которые видят все пользователи. Когда пользователь авторизован как администратор,
@@ -31,6 +30,17 @@ class PencilImage extends Widget
     public $group;
 
     /**
+     * Передаем ширину и высоту для миниатюры, которую отображает виджет. Если параметр не указан, изображение будет
+     * отображаться в пропорциях оригинала.
+     *
+     * ПРИМЕР:
+     * PencilImage::begin(['group' => 'example', 'thumbnail' => ['width': 100, 'height': 50]]);
+     *
+     * @var array $thumbnail
+     */
+    public $thumbnail;
+
+    /**
      * Если значение `false`, отображается большая кнопка для редактирования. Подходит для создания/редактирования
      * альбомов.
      * Если значение `true`, кнопка имеет маленький размер и позицию absolute. Подходит для создания/редактирования
@@ -50,74 +60,83 @@ class PencilImage extends Widget
     public $layout;
 
     /**
-     * Подключение необходимых css и js.
-     * Добавляем к $optionsAdmin обязательные атрибуты.
+     * Экземляр класса с изображениями.
+     * @var Image $model
+     */
+    private $model;
+
+    /**
+     * Инициализация виджета.
      */
     public function init()
     {
         parent::init();
-        if ($this->checkPermission()) {
+        if (empty($this->group)) { // Выбрасываем исключение, если не переданы обязательные параметры.
+            throw new \Exception('Не передан обязательный параметр: group.');
+        }
+        if ($this->checkPermission()) { // Подключаем css и js только для пользователя с правами на редактирование.
             PencilAsset::register($this->view);
         }
+        if ($this->layout === null) { // Создаем уникальное наименование группы для каждой страницы.
+            $this->group = $this->view->context->categoryId . '-' . $this->group;
+        } else {
+            $this->group = $this->layout . '-' . $this->group;
+        }
+
+        $this->model = new Image();
+        $this->model = $this->model->findByGroup($this->group);
+
+        ob_start();
     }
 
     /**
-     * Вывод кнопки для работы с изображениями в модальном окне.
+     * Отображение виджета.
+     * Создается экземляр переданого html, который не отображается. Используется для отображения изменений через ajax.
+     * В переданном html тег <img src="#"> заменяется на актуальное изображение.
+     * Выводится кнопка редактирования для администратора.
      */
     public function run()
     {
-        if ($this->checkPermission()) {
-            if ($this->layout === null) {
-                $group = $this->view->context->categoryId . '-' . $this->group;
-            } else {
-                $group = $this->layout . '-' . $this->group;
-            }
+        $content = ob_get_clean();
 
-            if ($this->small === false) {
-                echo Html::beginTag('div', ['class' => 'pencil-gallery']);
-                echo Html::a('Изменить изображения', '#', [
-                    'data-modal' => 'pencil-image',
-                    'data-group' => $group,
-                    'class' => 'big-gallery-button'
-                ]);
-                echo Html::endTag('div');
-            } elseif($this->small === true) {
-                echo Html::a('+', '#', [
-                    'data-modal' => 'pencil-image',
-                    'data-group' => $group,
-                    'class' => 'small-gallery-button'
-                ]);
-            } else {
-                throw new \Exception('Передано некорректное значение для свойства "small"');
-            }
-
+        echo Html::beginTag('div', ['data-target' => 'example-' . $this->group, 'style' => 'display: none;']);
+            echo $content;
+        echo Html::endTag('div');
+        foreach ($this->model as $key => $model) {
+            $img = Html::img($model->mini, ['alt' => $model->alt]);
+            $replace = preg_replace('#<img.*src="(.*)".*>#isU', $img, $content);
+            echo $replace;
         }
+        echo $this->button();
     }
 
     /**
-     * Массив с выборкой изображений из базы данных для вывода в приложении.
-     * Для вывода изображений используйте перебор циклом.
+     * Рендер кнопки. Имеется 2 варианта отображания, полноразмерное (для отображения коллекций изображений) и
+     * небольшая кнопка в нижнем углу изображения (для отображения отдельных изображений).
      *
-     * Массив содержит следующие полезные параметры для отображения:
-     * src - полный путь до изображения.
-     * alt - наименование изображения.
-     * group - наименование группы, в которую объеденены изображения.
-     *
-     * @param array $params смотрите выше одноименное свойство класса.
-     * @param string $layout смотрите выше одноименное свойство класса.
-     * @return array|\yii\db\ActiveRecord[]
+     * @throws \Exception
      */
-    public static function arrayImg($params)
+    public function button()
     {
-        if (ArrayHelper::getValue($params, 'layout') === null) {
-            $group = \Yii::$app->view->context->categoryId . '-' . $params['group'];
-        } else {
-            $group = ArrayHelper::getValue($params, 'layout') . '-' . $params['group'];
+        if ($this->checkPermission()) {
+            $generalOptions = [
+                'data-modal' => 'pencil-image',
+                'data-group' => $this->group,
+                'data-width' => $this->thumbnail['width'],
+                'data-height' => $this->thumbnail['height'],
+            ];
+
+            if ($this->small === false) {
+                $specificOptions = ['class' => 'big-gallery-button'];
+                echo Html::beginTag('div', ['class' => 'pencil-gallery']);
+                    echo Html::a('Изменить изображения', '#', array_merge($generalOptions, $specificOptions));
+                echo Html::endTag('div');
+            } elseif($this->small === true) {
+                $specificOptions = ['class' => 'small-gallery-button'];
+                echo Html::a('+', '#', array_merge($generalOptions, $specificOptions));
+            } elseif ($this->small !== true && $this->small !== false) {
+                throw new \Exception('Передано некорректное значение для свойства: small.');
+            }
         }
-
-        $model = new ImageModel();
-        $model = $model->findByGroup($group);
-
-        return isset($model) ? $model : [];
     }
 }

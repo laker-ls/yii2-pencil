@@ -2,6 +2,7 @@
 
 namespace lakerLS\pencil\models;
 
+use himiklab\thumbnail\EasyThumbnailImage;
 use yii\db\ActiveRecord;
 use Yii;
 
@@ -10,14 +11,25 @@ use Yii;
  *
  * @property int $id
  * @property string $group
- * @property string $src
+ * @property string $full
+ * @property string $mini
  * @property string $alt
  * @property int $position
  * @property object $image В переменную передаются изображения для загрузки с компьютера.
  */
 class Image extends ActiveRecord
 {
+    /**
+     * Изображения для загрузки на сервер.
+     * @var array $image
+     */
     public $image;
+
+    /**
+     * Путь оригинального изображения.
+     * @var string $fullPath
+     */
+    public $fullPath;
 
     /**
      * {@inheritdoc}
@@ -33,10 +45,10 @@ class Image extends ActiveRecord
     public function rules()
     {
         return [
-            [['group', 'src', 'position'], 'required'],
-            [['src'], 'file', 'extensions' => 'png, jpg', 'maxFiles' => 20],
+            [['group', 'full', 'position'], 'required'],
+            [['full'], 'file', 'extensions' => 'png, jpg', 'maxFiles' => 20],
             [['position'], 'integer'],
-            [['group', 'src', 'alt'], 'string', 'max' => 255],
+            [['group', 'full', 'mini', 'alt'], 'string', 'max' => 255],
             [['alt'], function($attribute) {
                 $group = self::findAll(['group' => $this->group]);
                 foreach ($group as $img) {
@@ -56,8 +68,9 @@ class Image extends ActiveRecord
         return [
             'id' => 'ID',
             'group' => 'Группа',
-            'src' => 'Src',
-            'alt' => 'Alt',
+            'full' => 'Оригинал',
+            'mini' => 'Миниатюра',
+            'alt' => 'Наименование',
             'position' => 'Позиция',
         ];
     }
@@ -75,7 +88,7 @@ class Image extends ActiveRecord
             ->cache()
             ->all();
 
-        return $model;
+        return isset($model) ? $model : [];
     }
 
     /**
@@ -83,12 +96,12 @@ class Image extends ActiveRecord
      *
      * @return bool|string
      */
-    public function upload()
+    public function uploadFull()
     {
         if (!empty($this->image)) {
             $nameImg = $this->uniqueName($this->image);
             $folder = substr($nameImg, 0, 2);
-            $rootPath = Yii::$app->getModule('pencil')->params['imagePath'];
+            $rootPath = Yii::$app->getModule('pencil')->params['imagePath']['full'];
             $pathImg = $rootPath . '/' . $folder;
 
             if (!is_dir($rootPath)) {
@@ -98,11 +111,33 @@ class Image extends ActiveRecord
                 mkdir($pathImg, 0777);
             }
 
-            $this->image->saveAs($pathImg . '/' . $nameImg);
-            return '/' . $pathImg . '/' . $nameImg;
+            $this->fullPath = $pathImg . '/' . $nameImg;
+            $this->image->saveAs($this->fullPath);
+            
+            return '/' . $this->fullPath;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Создание миниатюры изображения.
+     *
+     * @param $width
+     * @param $height
+     * @return string
+     */
+    public function uploadMini($width, $height)
+    {
+        EasyThumbnailImage::$cacheAlias = Yii::$app->getModule('pencil')->params['imagePath']['mini'];
+
+        return EasyThumbnailImage::thumbnailFileUrl(
+            $this->fullPath,
+            $width,
+            $height,
+            EasyThumbnailImage::THUMBNAIL_OUTBOUND,
+            100
+        );
     }
 
     /**

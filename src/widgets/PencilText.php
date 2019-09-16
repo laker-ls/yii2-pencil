@@ -25,11 +25,7 @@ use yii\helpers\ArrayHelper;
  *
  *      public function actionIndex()
  *      {
- *          // Где $category объект текущей категории.
- *          $this->categoryId = $category->id;
- *
- *          // Если страница статическая, то можем задать `id` явно, но данный способ не является хорошей практикой.
- *          $this->categoryId = 1;
+ *          $this->categoryId = 'example-index';         
  * 
  *          return $this->render('view');
  *      }

@@ -1,13 +1,14 @@
 <?php
 
-use lakerLS\pencil\controllers\ImageController;
+use lakerLS\pencil\helpers\PencilHelper;
 use lakerLS\pencil\models\Image;
 use yii\bootstrap4\Html;
 
 
 /** @var Image $model */
 /** @var string $group */
-
+/** @var string $width */
+/** @var string $height */
 ?>
 
 <div class="modal fade" id="modal-pencil-image" tabindex="-1" role="dialog" aria-labelledby="modal-pencil" aria-hidden="true">
@@ -17,7 +18,7 @@ use yii\bootstrap4\Html;
         ]) ?>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><?= empty($model->text) ? 'Создание' : 'Редактирование' ?> содержимого</h5>
+                    <h5 class="modal-title"><?= isset($model[0]) ? 'Редактирование' : 'Создание' ?>. Пропорции изображения: <b><?= "{$width}x{$height}px." ?></b></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -25,30 +26,30 @@ use yii\bootstrap4\Html;
                 <div class="modal-body">
                     <div class="preview">
                         <?php foreach ($model as $image) : ?>
-                            <?php if (!empty($image->src)) : ?>
-                                <div id="image-<?= $image->id ?>" class="col-lg-3 cart" data-position="<?= $image->position ?>">
+                            <?php if (!empty($image->full)) : ?>
+                                <div id="image-<?= $image->id ?>" class="col-lg-3 cart" data-position="<?= $image->position ?>" data-group="<?= $image->group ?>">
                                     <div class="delete">
                                         <a href="#">✖</a>
                                     </div>
-                                    <img class="img-fluid" src="<?= $image->src ?>" alt="<?= $image->alt ?>">
-                                    <p class="name-img"><?= ImageController::fullName($image)?></p>
+                                    <img class="img-fluid" src="<?= $image->full ?>" alt="<?= $image->alt ?>">
+                                    <p class="name-img"><?= PencilHelper::fullNameImg($image)?></p>
                                 </div>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
                     <?= Html::hiddenInput('Image[group]', $group) ?>
+                    <?= Html::hiddenInput('Image[width]', $width) ?>
+                    <?= Html::hiddenInput('Image[height]', $height) ?>
                 </div>
                 <div class="modal-footer">
-
-                        <div class="col-lg-6 file-input">
+                        <div class="col-lg-4 file-input">
                             <div class="new-input">Выбрать изображения</div>
-                            <input class="default-input" type="file" name="Image[src][]" multiple />
+                            <input class="default-input" type="file" name="Image[full][]" multiple />
                         </div>
-                        <div class="col-lg-6 action">
+                        <div class="col-lg-8 action">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
                             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
                         </div>
-
                 </div>
             </div>
         <?= Html::endForm() ?>
