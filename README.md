@@ -52,15 +52,15 @@ yii migrate --migrationPath=@lakerLS/pencil/migrations
 ```php
 'modules' => [
     'pencil' => [
-                'class' => '\lakerLS\pencil\Module',
-                'params' => [
-                    'accessRoles' => ['admin'],
-                    'imagePath' => [
-                        'full' => 'upload/image-gallery/full',
-                        'mini' => 'upload/image-gallery/mini',
-                    ],
-                ],
+        'class' => '\lakerLS\pencil\Module',
+        'params' => [
+            'accessRoles' => ['admin'],
+            'imagePath' => [
+                'full' => 'upload/image-gallery/full',
+                'mini' => 'upload/image-gallery/mini',
             ],
+        ],
+    ],
 ]
 ```
 
@@ -136,6 +136,7 @@ use lakerLS\pencil\widgets\Pencil;
 ```php
 <?php
 use lakerLS\pencil\widgets\PencilImage;
+use yii\bootstrap4\Html;
 ?>
  <div class="example-container" style="position: relative">
      <?php 
@@ -156,9 +157,6 @@ use lakerLS\pencil\widgets\PencilImage;
      <?php PencilImage::end() ?>
  </div>
 ```
-Альтернативное использование, которое подходит для отображения одного изображения, при этом не влияя на верстку
-(не добавляет лишние отступы, отображается на изображении в нижнем правом углу).
-
 `group` (string) - обязательный параметр, который необходимо передавать для создания альбома изображений.
 Может использоваться кириллица.
 
@@ -167,7 +165,8 @@ use lakerLS\pencil\widgets\PencilImage;
 `small` (boolean) - необязательный параметр. По умолчанию `false`.<br />
 Если значение `false`, отображается большая кнопка для редактирования. 
 Подходит для создания/редактирования альбомов. <br />
-Если значение `true`, кнопка имеет маленький размер и позицию absolute.
+Если значение `true`, кнопка имеет маленький размер и позицию absolute. Ни как не влияет на верстку, отображается в нижнем
+правом углу.
 
 `layout` (string) - необязательный параметр. Для размещение текста в `layout` необходимо передать его имя.
 

@@ -14,7 +14,6 @@ class PencilAsset extends AssetBundle
     public $sourcePath = '@lakerLS/pencil/assets';
     public $jsOptions = ['position' => View::POS_END];
     public $css = [
-        '//ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/sunny/jquery-ui.min.css',
         'css/pencil.css',
     ];
     public $js = [
