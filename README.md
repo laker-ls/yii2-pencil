@@ -8,8 +8,7 @@
 [![License](https://poser.pugx.org/laker-ls/yii2-pencil/license)](https://packagist.org/packages/laker-ls/yii2-pencil)
 [![Total Downloads](https://poser.pugx.org/laker-ls/yii2-pencil/downloads)](https://packagist.org/packages/laker-ls/yii2-pencil)
 
-> ВНИМАНИЕ: расширение работает только с существующей таблицей `category` в базе данных, где хранится `id` страницы.
-Для работы так же необходим Rbac с существующей ролью. Используется bootstrap 4.
+> ВНИМАНИЕ: Для работы необходим Rbac с существующей ролью. Используется bootstrap 4.
 
 Отображение текста, которое редактируется через модальное окно, когда пользователь авторизован как администратор.
 Не админ, видит обычный текст, в то же время администратор может взаимодействовать с ним, по нажатию на текст
