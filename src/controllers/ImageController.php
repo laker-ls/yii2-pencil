@@ -103,7 +103,10 @@ class ImageController extends Controller
      */
     public function actionDelete()
     {
+        $this->enableCsrfValidation = false;
         $post = Yii::$app->request->post();
+
+        echo '<pre>'; print_r(1); echo '</pre>'; die;
 
         $id = $post['id'];
         $id = mb_substr(mb_strstr($id, '-'), 1, mb_strlen($id)); // удаление лишних данных из переданной строки.
