@@ -55,9 +55,36 @@ class PencilImage extends Widget
     public $nonUnique;
 
     /**
-     * @var Image Экземляр класса с изображениями.
+     * @return string вывод ссылки на миниатюру изображения.
      */
-    private $model;
+    public function urlMini()
+    {
+        return '#{url-mini}';
+    }
+
+    /**
+     * @return string вывод ссылки на оригинал изображения.
+     */
+    public function urlFull()
+    {
+        return '#{url-full}';
+    }
+
+    /**
+     * @return string имя изображения.
+     */
+    public function alt()
+    {
+        return '#{alt}';
+    }
+
+    /**
+     * @return string группа изображения.
+     */
+    public function group()
+    {
+        return '#{group}';
+    }
 
     /**
      * Инициализация виджета.
@@ -77,9 +104,6 @@ class PencilImage extends Widget
             $this->group = $this->nonUnique . '-' . $this->group;
         }
 
-        $this->model = new Image();
-        $this->model = $this->model->findByGroup($this->group);
-
         ob_start();
     }
 
@@ -93,13 +117,21 @@ class PencilImage extends Widget
     {
         $content = ob_get_clean();
 
+        $images = new Image();
+        $images = $images->findByGroup($this->group);
+
         echo Html::beginTag('div', ['data-target' => 'example-' . $this->group, 'style' => 'display: none;']);
-            echo $content;
+            $result = $content;
+            echo $result;
         echo Html::endTag('div');
-        foreach ($this->model as $key => $model) {
-            $img = Html::img($model->mini, ['alt' => $model->alt]);
-            $replace = preg_replace('#<img.*src="(.*)".*>#isU', $img, $content);
-            echo $replace;
+        foreach ($images as $key => $image) {
+            $result = strtr($content, [
+                $this->urlMini() => $image->mini,
+                $this->urlFull() => $image->full,
+                $this->alt() => $image->alt,
+                $this->group() => $image->group,
+            ]);
+            echo $result;
         }
         echo $this->button();
     }

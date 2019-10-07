@@ -47,7 +47,7 @@ class AjaxGallery {
         this.submitForm(modal);
     }
 
-    /** Добавление изображений, которые были выбраны для загрузки к уже существующим. */
+    /** Добавление изображений к уже существующим. */
     preview(modal) {
         let self = this;
         let imageInput = modal.find("input[type='file']");
@@ -184,10 +184,14 @@ class AjaxGallery {
         container.nextUntil('[data-modal="pencil-image"]').remove();
 
         $(result).each(function (key, img) { // берем шаблон из html, заполняем его и дублируем в нужное место.
-            let template = $('[data-target="example-' + img.group + '"]');
+            let templateImg = $('[data-target="example-' + img.group + '"]');
+            let instanceTemplateImg = templateImg.html()
+                .replace(/#{url-mini}/gi, img.mini)
+                .replace(/#{url-full}/gi, img.full)
+                .replace(/#{alt}/gi, img.alt)
+                .replace(/#{group}/gi, img.group);
 
-            template.find("img").attr({"src": img.mini, "alt": img.alt});
-            container.after(template.html());
+            container.after(instanceTemplateImg);
         });
     }
 

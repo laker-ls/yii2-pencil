@@ -126,7 +126,8 @@ use lakerLS\pencil\widgets\Pencil;
 Между `begin` и `end` передаем шаблон для каждого отдельного изображения. В этом шаблоне обязательно должен быть
 один пустой тег `<img>`, который будет заменен на реальное изображение.
 
-Для использования виджета в layout'е обязательно передать параметром `layout` имя layout'a.
+Для использования виджета в layout'е или в нескольких местах сайта обязательно передать параметром `nonUnique` имя layout'a
+или произвольную строку, которая будет служить индетификатором.
 
 Передавая `true` или `false` параметру `small` выбираем вид кнопки для редактирования (видна только администратору).
 
@@ -140,7 +141,7 @@ use yii\bootstrap4\Html;
 ?>
  <div class="example-container" style="position: relative">
      <?php 
-     PencilImage::begin([
+     $image = PencilImage::begin([
         'group' => 'our-characteristics-img-main', 
         'small' => true, 
         'thumbnail' => [
@@ -149,11 +150,11 @@ use yii\bootstrap4\Html;
         ]
      ]);
      ?>
-     
-         <a href="#">
-             <?= Html::img('#') ?>
-         </a>
-         
+        <div data-group="<?= $image->group() ?>" href="<?= $image->urlFull() ?>">
+            <a href="#">
+                <img src="<?= $image->urlMini() ?>" alt="<?= $image->alt() ?>"
+            </a>
+        </div>
      <?php PencilImage::end() ?>
  </div>
 ```
@@ -170,6 +171,16 @@ use yii\bootstrap4\Html;
 
 `nonUnique` (string) - необязательный параметр. Для отображения одних и тех же изображений на нескольких страницах необходимо передать
 строку, которая будет использоваться вместо `id`.
+
+**Следующие функции используются для вывода полей изображения:**
+
+$example = PencilImage::begin(); // Экземляр класса.
+
+$example->urlMini() - данная функция будет заменена содержимым столбца `mini`. <br />
+$example->urlFull() - данная функция будет заменена содержимым столбца `full`. <br />
+$example->alt() - данная функция будет заменена содержимым столбца `alt`. <br />
+$example->group() - данная функция будет заменена содержимым столбца `group`. <br />
+    
 
 ## Лицензия
 
