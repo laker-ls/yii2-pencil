@@ -85,6 +85,7 @@
 }
 
 #modal-pencil-image .preview p {
+    overflow: hidden;
     margin: 10px 0 0;
     font-size: 12px;
     color: #212529;
@@ -105,6 +106,10 @@
 }
 
 #modal-pencil-image .modal-footer {
+    display: block;
+}
+
+#modal-pencil-image .modal-footer .buttons {
     justify-content: space-between;
 }
 
@@ -138,4 +143,14 @@
     filter: alpha(opacity=0);
     opacity: 0;
     height: 38px;
+}
+
+#modal-pencil-image .error-label {
+    display: none;
+    background-color: #f2dede;
+    color: #a94442;
+    padding: 10px;
+    font-weight: 900;
+    border-radius: 0 0 5px 5px;
+    border: 1px solid #ebcccc;
 }

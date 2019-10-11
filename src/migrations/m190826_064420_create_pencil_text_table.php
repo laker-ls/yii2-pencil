@@ -20,16 +20,7 @@ class m190826_064420_create_pencil_text_table extends Migration
         ]);
 
         $this->addPrimaryKey('primary_id_name', 'pencil_text', 'id_name');
-
-        $this->addForeignKey(
-            'FK_pencil_text_category',
-            'pencil_text',
-            'category_id',
-            'category',
-            'id',
-            'cascade',
-            'cascade'
-        );
+        $this->createIndex('index_category_id', 'pencil_text', 'category_id');
     }
 
     /**

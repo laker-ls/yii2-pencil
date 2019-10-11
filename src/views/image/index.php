@@ -42,6 +42,7 @@ use yii\bootstrap4\Html;
                     <?= Html::hiddenInput('Image[height]', $height) ?>
                 </div>
                 <div class="modal-footer">
+                    <div class="row buttons">
                         <div class="col-lg-4 file-input">
                             <div class="new-input">Выбрать изображения</div>
                             <input class="default-input" type="file" name="Image[full][]" multiple />
@@ -50,7 +51,9 @@ use yii\bootstrap4\Html;
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
                             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
                         </div>
+                    </div>
                 </div>
+                <div class="error-label"></div>
             </div>
         <?= Html::endForm() ?>
     </div>

@@ -80,14 +80,18 @@ class AjaxGallery {
                 reader.readAsDataURL(files[index]);
 
                 let submitButton = modal.find("[type='submit']");
+                let errorLabel = $("#modal-pencil-image").find(".error-label");
+
                 if (index + 1 === files.length && error === 'error') {
                     let message = 'Совпадение имен изображений!';
 
-                    modal.find(".action").append('<div class="error-label">' + message + '</div>');
+                    modal.find(".error-label").append(message);
                     submitButton.attr({"disabled": true});
+                    errorLabel.css({display: "block"});
                 } else {
                     modal.find(".action").find("div").remove();
                     submitButton.attr({"disabled": false});
+                    errorLabel.css({display: "none"});
                 }
             }
         })
@@ -95,13 +99,13 @@ class AjaxGallery {
 
     /** Проверка на совпадение имен. */
     validateName(imageName, imagesCompare) {
-        let compareResult = 'success';
+        let compareResult = "success";
 
         imagesCompare.each(function (key, img) {
             let name = $(img).find(".name-img").text();
 
             if (imageName === name) {
-                compareResult = 'error';
+                compareResult = "error";
                 return false;
             }
         });
@@ -167,6 +171,28 @@ class AjaxGallery {
                     (result) => {
                         self.refreshDisplayImg(result, group);
                         parent.remove(); // удаление изображения из модального окна.
+
+                        let submitButton = modal.find("[type='submit']");
+                        let errorLabel = $("#modal-pencil-image").find(".error-label");
+                        let removedImgName = parent.find(".name-img").text();
+                        let matchingImage = $(".preview").find(".name-img:contains(" + removedImgName + ")");
+                        let matchingParent = matchingImage.closest(".cart");
+                        let classInform = self.validateName(removedImgName, matchingImage);
+
+                        matchingParent.attr({class: "col-lg-3 cart pre-load " + classInform});
+
+                        let error = $("#modal-pencil-image").find(".cart").hasClass("error");
+                        if (error === true) {
+                            let message = 'Совпадение имен изображений!';
+
+                            modal.find(".error-label").append(message);
+                            submitButton.attr({"disabled": true});
+                            errorLabel.css({display: "block"});
+                        } else {
+                            modal.find(".action").find("div").remove();
+                            submitButton.attr({"disabled": false});
+                            errorLabel.css({display: "none"});
+                        }
                     }
                 );
             }

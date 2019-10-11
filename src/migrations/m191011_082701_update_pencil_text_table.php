@@ -3,16 +3,15 @@
 use yii\db\Migration;
 
 /**
- * Class m190911_124926_delete_fk_key
+ * Class m191011_082701_update_pencil_text_table
  */
-class m190911_124926_drop_fk_pencil_text_key extends Migration
+class m191011_082701_update_pencil_text_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->dropForeignKey('FK_pencil_text_category', 'pencil_text');
         $this->alterColumn('pencil_text', 'category_id', $this->integer());
     }
 
@@ -21,7 +20,7 @@ class m190911_124926_drop_fk_pencil_text_key extends Migration
      */
     public function safeDown()
     {
-        echo "m190911_124926_delete_fk_key cannot be reverted.\n";
+        echo "m191011_082701_update_pencil_text_table cannot be reverted.\n";
 
         return false;
     }
@@ -35,7 +34,7 @@ class m190911_124926_drop_fk_pencil_text_key extends Migration
 
     public function down()
     {
-        echo "m190911_124926_delete_fk_key cannot be reverted.\n";
+        echo "m191011_082701_update_pencil_text_table cannot be reverted.\n";
 
         return false;
     }

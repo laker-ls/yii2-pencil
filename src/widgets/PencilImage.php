@@ -55,6 +55,12 @@ class PencilImage extends Widget
     public $nonUnique;
 
     /**
+     * @var bool при значении `true` кнопка для создания/редактирования изображений не будет отображаться.
+     * Актуально в случае, если необходимо вывести кнопку отдельно в другом месте.
+     */
+    public $hideButton = false;
+
+    /**
      * @return string вывод ссылки на миниатюру изображения.
      */
     public function urlMini()
@@ -84,6 +90,21 @@ class PencilImage extends Widget
     public function group()
     {
         return '#{group}';
+    }
+
+    /**
+     * Вывод кнопки в произвольном месте. Используется стандартный вид кнопки.
+     * ПРИМЕР:
+     *      <div>
+     *          <?php $pencilImg = PencilImage::begin([...]); ?>
+     *              <img ...>
+     *          <?php PencilImage::end(); ?>
+     *      </div>
+     *      <?php $pencilImg->displayButton(); ?>
+     */
+    public function displayButton()
+    {
+        $this->defaultButton();
     }
 
     /**
@@ -142,27 +163,58 @@ class PencilImage extends Widget
      *
      * @throws \Exception
      */
-    public function button()
+    private function button()
     {
-        if ($this->checkPermission()) {
-            $generalOptions = [
-                'data-modal' => 'pencil-image',
-                'data-group' => $this->group,
-                'data-width' => $this->thumbnail['width'],
-                'data-height' => $this->thumbnail['height'],
-            ];
-
-            if ($this->small === false) {
-                $specificOptions = ['class' => 'big-gallery-button'];
-                echo Html::beginTag('div', ['class' => 'pencil-gallery']);
-                    echo Html::a('Изменить изображения', '#', array_merge($generalOptions, $specificOptions));
-                echo Html::endTag('div');
-            } elseif($this->small === true) {
-                $specificOptions = ['class' => 'small-gallery-button'];
-                echo Html::a('+', '#', array_merge($generalOptions, $specificOptions));
-            } elseif ($this->small !== true && $this->small !== false) {
-                throw new \Exception('Передано некорректное значение для свойства: small.');
+        if ($this->checkPermission() && $this->hideButton == false) {
+            switch ($this->small) {
+                case (false):
+                    $this->defaultButton();
+                    break;
+                case (true):
+                    $this->smallButton();
+                    break;
+                default:
+                    throw new \Exception('Передано некорректное значение для свойства: small.');
             }
         }
+    }
+
+    /**
+     * Формирование HTML кнопки для создания/редактирования изображений.
+     * Данный вариант отображения используется по умолчанию.
+     */
+    private function defaultButton()
+    {
+        $specificOptions = ['class' => 'big-gallery-button'];
+
+        echo Html::beginTag('div', ['class' => 'pencil-gallery']);
+            echo Html::a('Изменить изображения', '#', array_merge($this->generalOptionsButton(), $specificOptions));
+        echo Html::endTag('div');
+    }
+
+    /**
+     * Формирование HTML кнопки для создания/редактирования изображений.
+     * Данный вариант используется, если свойство `small` имеет значение `true`.
+     */
+    private function smallButton()
+    {
+        $specificOptions = ['class' => 'small-gallery-button'];
+
+        echo Html::a('+', '#', array_merge($this->generalOptionsButton(), $specificOptions));
+    }
+
+    /**
+     * Свойства для кнопки, которые используются всегда.
+     *
+     * @return array
+     */
+    private function generalOptionsButton()
+    {
+        return [
+            'data-modal' => 'pencil-image',
+            'data-group' => $this->group,
+            'data-width' => $this->thumbnail['width'],
+            'data-height' => $this->thumbnail['height'],
+        ];
     }
 }
