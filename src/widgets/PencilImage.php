@@ -185,11 +185,13 @@ class PencilImage extends Widget
      */
     private function defaultButton()
     {
-        $specificOptions = ['class' => 'big-gallery-button'];
+        if ($this->checkPermission()) {
+            $specificOptions = ['class' => 'big-gallery-button'];
 
-        echo Html::beginTag('div', ['class' => 'pencil-gallery']);
-            echo Html::a('Изменить изображения', '#', array_merge($this->generalOptionsButton(), $specificOptions));
-        echo Html::endTag('div');
+            echo Html::beginTag('div', ['class' => 'pencil-gallery']);
+                echo Html::a('Изменить изображения', '#', array_merge($this->generalOptionsButton(), $specificOptions));
+            echo Html::endTag('div');
+        }
     }
 
     /**
