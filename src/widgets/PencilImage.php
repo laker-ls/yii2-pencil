@@ -5,7 +5,7 @@ namespace lakerLS\pencil\widgets;
 use lakerLS\pencil\models\Image;
 use lakerLS\pencil\PencilAsset;
 use yii\base\Widget;
-use yii\bootstrap4\Html;
+use yii\helpers\Html;
 use lakerLS\pencil\traits\AccessWidgetTrait;
 
 /**

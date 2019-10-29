@@ -1,8 +1,8 @@
 <?php
 
 use lakerLS\pencil\models\Text;
-use yii\bootstrap4\ActiveForm;
-use yii\bootstrap4\Html;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
 /** @var Text $model */
 ?>

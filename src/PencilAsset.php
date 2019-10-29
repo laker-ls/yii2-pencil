@@ -23,8 +23,6 @@ class PencilAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\JqueryAsset',
-        'yii\bootstrap4\BootstrapAsset',
-        'yii\bootstrap4\BootstrapPluginAsset',
         'yii\web\YiiAsset',
     ];
 }

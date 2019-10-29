@@ -2,7 +2,7 @@
 
 use lakerLS\pencil\helpers\PencilHelper;
 use lakerLS\pencil\models\Image;
-use yii\bootstrap4\Html;
+use yii\helpers\Html;
 
 
 /** @var Image $model */

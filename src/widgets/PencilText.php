@@ -6,8 +6,8 @@ use lakerLS\pencil\PencilAsset;
 use lakerLS\pencil\models\Text as TextModel;
 use lakerLS\pencil\traits\AccessWidgetTrait;
 use yii\base\Widget;
-use yii\bootstrap4\Html;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 /**
  * Отображение текста, которое редактируется через модальное окно, когда пользователь авторизован как администратор.
