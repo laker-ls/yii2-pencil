@@ -8,7 +8,7 @@
 [![License](https://poser.pugx.org/laker-ls/yii2-pencil/license)](https://packagist.org/packages/laker-ls/yii2-pencil)
 [![Total Downloads](https://poser.pugx.org/laker-ls/yii2-pencil/downloads)](https://packagist.org/packages/laker-ls/yii2-pencil)
 
-> ВНИМАНИЕ: Для работы необходим Rbac с существующей ролью. Используется bootstrap 4.
+> ВНИМАНИЕ: Для работы необходим Rbac с существующей ролью.
 
 Отображение текста, которое редактируется через модальное окно, когда пользователь авторизован как администратор.
 Не админ, видит обычный текст, в то же время администратор может взаимодействовать с ним, по нажатию на текст
@@ -28,13 +28,13 @@
 Для установки запустите
 
 ```
-$ php composer.phar require laker-ls/yii2-pencil "~2.0.4"
+$ php composer.phar require laker-ls/yii2-pencil "~2.1.0"
 ```
 
 или добавьте в `composer.json` в раздел `require` следующую строку
 
 ```
-"laker-ls/yii2-pencil": "~2.0.4"
+"laker-ls/yii2-pencil": "~2.1.0"
 ```
 
 > Смотрите [список изменений](https://github.com/laker-ls/yii2-pencil/blob/master/CHANGE.md) для подробной информации о версиях.
@@ -136,7 +136,6 @@ use lakerLS\pencil\widgets\Pencil;
 ```php
 <?php
 use lakerLS\pencil\widgets\PencilImage;
-use yii\bootstrap4\Html;
 ?>
  <div class="example-container" style="position: relative">
      <?php 
@@ -170,6 +169,34 @@ use yii\bootstrap4\Html;
 
 `nonUnique` (string) - необязательный параметр. Для отображения одних и тех же изображений на нескольких страницах необходимо передать
 строку, которая будет использоваться вместо `id`.
+
+## Удаление неиспользуемых изображений
+
+Удаляя записи через базу данных останутся изображения, для этого реализовано удаление неиспользуемых изображений.
+В остальных случаях нет необходимости использовать данный контроллер.
+
+В `config/console.php` необходимо подключить данный модуль следующим образом:
+
+```php
+'modules'=>[
+        'pencil' => [
+            'class' => '\lakerLS\pencil\Module',
+            'params' => [
+                'imagePath' => [
+                    'full' => 'upload/image-gallery/full', // Ваш путь к оригинальному изображению.
+                    'mini' => 'upload/image-gallery/mini', // Ваш путь к миниатюре изображения.
+                ],
+            ],
+            'controllerNamespace' => 'lakerLS\pencil\commands',
+        ],
+    ],
+```
+
+В консоли, из корня проекта исполнить следующую команду:
+
+```
+yii pencil/cron/delete-image
+```
 
 ## Лицензия
 

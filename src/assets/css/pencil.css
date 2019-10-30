@@ -19,6 +19,7 @@
 
 .pencil-gallery {
     margin: 20px 0;
+    text-align: center;
 }
 
 .big-gallery-button {
@@ -45,6 +46,7 @@
     text-align: center !important;
     border-radius: 3px !important;
     transition: 300ms !important;
+    line-height: 15px !important;
 }
 
 .small-gallery-button:hover {
@@ -56,6 +58,7 @@
     padding: 11px;
     border: 1px dashed #00000040;
     border-radius: 5px;
+    min-height: 150px;
 }
 
 #modal-pencil-image .preview::after {
@@ -153,4 +156,9 @@
     font-weight: 900;
     border-radius: 0 0 5px 5px;
     border: 1px solid #ebcccc;
+}
+
+#modal-pencil-image img {
+    max-width: 100% !important;
+    height: auto;
 }

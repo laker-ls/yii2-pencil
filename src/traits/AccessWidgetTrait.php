@@ -3,6 +3,7 @@
 namespace lakerLS\pencil\traits;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /** Методы для работы с отображением виджета в зависимости от прав доступа. */
 trait AccessWidgetTrait
@@ -13,7 +14,8 @@ trait AccessWidgetTrait
      */
     private function checkPermission()
     {
-        $roles = Yii::$app->getModule('pencil')->params['accessRoles'];
+        $roles = ArrayHelper::getValue(Yii::$app->getModule('pencil')->params, 'accessRoles', ['admin']);
+
         if (is_string($roles)) {
             $roles = [$roles];
         }
