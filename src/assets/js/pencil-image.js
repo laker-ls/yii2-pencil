@@ -141,9 +141,11 @@ class AjaxGallery {
                 dataType: "json",
             }).done(
                 (result) => {
-                    let group = result[0].group;
+                    if (result[0] !== undefined) {
+                        let group = result[0].group;
 
-                    self.refreshDisplayImg(result, group);
+                        self.refreshDisplayImg(result, group);
+                    }
                     modal.modal("hide");
                 }
             )

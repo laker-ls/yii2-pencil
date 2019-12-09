@@ -93,6 +93,14 @@ class PencilImage extends Widget
     }
 
     /**
+     * @return string номер изображения. Начинается с 1.
+     */
+    public function index()
+    {
+        return '#{index}';
+    }
+
+    /**
      * Вывод кнопки в произвольном месте. Используется стандартный вид кнопки.
      * ПРИМЕР:
      *      <div>
@@ -145,12 +153,13 @@ class PencilImage extends Widget
             $result = $content;
             echo $result;
         echo Html::endTag('div');
-        foreach ($images as $key => $image) {
+        foreach ($images as $index => $image) {
             $result = strtr($content, [
                 $this->urlMini() => $image->mini,
                 $this->urlFull() => $image->full,
                 $this->alt() => $image->alt,
                 $this->group() => $image->group,
+                $this->index() => $index + 1,
             ]);
             echo $result;
         }
