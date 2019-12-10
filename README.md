@@ -28,13 +28,13 @@
 Для установки запустите
 
 ```
-$ php composer.phar require laker-ls/yii2-pencil "~2.1.2"
+$ php composer.phar require laker-ls/yii2-pencil "~2.1.3"
 ```
 
 или добавьте в `composer.json` в раздел `require` следующую строку
 
 ```
-"laker-ls/yii2-pencil": "~2.1.2"
+"laker-ls/yii2-pencil": "~2.1.3"
 ```
 
 > Смотрите [список изменений](https://github.com/laker-ls/yii2-pencil/blob/master/CHANGE.md) для подробной информации о версиях.
@@ -144,7 +144,8 @@ use lakerLS\pencil\widgets\PencilImage;
         'small' => true, 
         'thumbnail' => [
             'width' => 634, 
-            'height' => 466
+            'height' => 466,
+            'quality' => 50,
         ]
      ]);
      ?>
@@ -159,7 +160,8 @@ use lakerLS\pencil\widgets\PencilImage;
 `group` (string) - обязательный параметр, который необходимо передавать для создания альбома изображений.
 Может использоваться кириллица.
 
-`thumbnail` (array) - обязательный параметр, в котором передаем ширину и высоту миниатюры.
+`thumbnail` (array) - обязательный параметр, в котором передаем ширину и высоту миниатюры. Необязательным параметром
+является `quality`. Качество миниатюры которое задается в диапазоне 1 до 100, по умолчанию равно 50.
 
 `small` (boolean) - необязательный параметр. По умолчанию `false`.<br />
 Если значение `false`, отображается большая кнопка для редактирования. 

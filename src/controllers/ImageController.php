@@ -39,7 +39,6 @@ class ImageController extends Controller
 
         return $this->render('index', [
             'model' => !empty($model) ? $model : $newModel,
-            'group' => $group,
             'width' => $width,
             'height' => $height,
         ]);
@@ -55,10 +54,8 @@ class ImageController extends Controller
     public function actionCreateUpdate()
     {
         $post = Yii::$app->request->post();
-        $width = $post['Image']['width'];
-        $height = $post['Image']['height'];
 
-        if (isset($post['Image'])) {
+        if (isset($post['Image']) && isset($post['Position'])) {
             $newImages = UploadedFile::getInstancesByName('Image[full]');
             foreach ($newImages as $image) {
                 $model = new Image();
@@ -66,7 +63,7 @@ class ImageController extends Controller
 
                 $model->group = $post['Image']['group'];
                 $model->full = $model->uploadFull();
-                $model->mini = $model->uploadMini($width, $height);
+                $model->mini = $model->uploadMini($post['Image']);
                 $model->alt = $image->baseName;
                 $model->position = $post['Position'][$image->name];
                 if ($model->save()) {

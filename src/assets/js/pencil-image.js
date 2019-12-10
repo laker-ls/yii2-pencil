@@ -15,12 +15,9 @@ class AjaxGallery {
 
         $('[data-modal="pencil-image"]').on("click", function (event) {
             event.preventDefault();
-            let data = {
-                "group": $(this).attr("data-group"),
-                "width": $(this).attr("data-width"),
-                "height": $(this).attr("data-height"),
-            };
-
+            
+            let data = $(this).data();
+            
             $.ajax({url: "/pencil/image/index", type: "get", data: data}).done(
                 (result) => {
                     let modal = $(result);
@@ -30,6 +27,7 @@ class AjaxGallery {
                     self.preview(modal);
                     self.deleteImg(modal);
                     self.fileButton(modal);
+                    self.submitForm(data, modal);
 
                     modal.on("hidden.bs.modal", function () {
                         $(this).remove();
@@ -39,12 +37,59 @@ class AjaxGallery {
         });
     }
 
+    /**
+     * Отправка формы. По нажатию на кнопку отправки создаются инпуты для сохранения позиции в базе данных.
+     *
+     * @param dataButton object кнопка по нажатию на которое, открывается модальное окно с необходимыми data-параметрами.
+     * @param modal object модальное окно.
+     */
+    submitForm(dataButton, modal) {
+        let self = this,
+            form = modal.find("form");
+
+        form.on("submit", function(event) {
+            event.preventDefault();
+            let formData = new FormData(this),
+                uploadImg = modal.find(".preview").find(".cart");
+
+            uploadImg.each(function (key, img) { // Добавляем в массив данные о позиции каждого изображения.
+                let nameImg = $(img).find(".name-img").text();
+
+                formData.set("Position", nameImg);
+                formData.set("Position[" + nameImg + "]", key + 1);
+            });
+
+            for (let key in dataButton) {
+                if (dataButton.hasOwnProperty(key)) {
+                    formData.set("Image[" + key + "]", dataButton[key]);
+                }
+            }
+
+            $.ajax({
+                url: "/pencil/image/create-update",
+                type: "post",
+                processData: false,
+                contentType: false,
+                data: formData,
+                dataType: "json",
+            }).done(
+                (result) => {
+                    if (result[0] !== undefined) {
+                        let group = result[0].group;
+
+                        self.refreshDisplayImg(result, group);
+                    }
+                    modal.modal("hide");
+                }
+            )
+        });
+    }
+
     /** Сортировка изображений с помощью jquery UI. Позиции изображений сохраняются в базу данных. */
     sortable(modal) {
         let container = modal.find(".preview");
 
         container.sortable({"containment": "parent", "tolerance": "pointer", "scroll": false});
-        this.submitForm(modal);
     }
 
     /** Добавление изображений к уже существующим. */
@@ -111,45 +156,6 @@ class AjaxGallery {
         });
 
         return compareResult;
-    }
-
-    /**
-     * Отправка формы. По нажатию на кнопку отправки создаются инпуты для сохранения позиции в базе данных.
-     */
-    submitForm(modal) {
-        let self = this;
-        let form = modal.find("form");
-
-        form.on("submit", function(event) {
-            event.preventDefault();
-            let formData = new FormData(this);
-            let uploadImg = modal.find(".preview").find(".cart");
-
-            uploadImg.each(function (key, img) { // Добавляем в массив данные о позиции каждого изображения.
-                let nameImg = $(img).find(".name-img").text();
-
-                formData.set("Position", nameImg);
-                formData.set("Position[" + nameImg + "]", key + 1);
-            });
-
-            $.ajax({
-                url: "/pencil/image/create-update",
-                type: "post",
-                processData: false,
-                contentType: false,
-                data: formData,
-                dataType: "json",
-            }).done(
-                (result) => {
-                    if (result[0] !== undefined) {
-                        let group = result[0].group;
-
-                        self.refreshDisplayImg(result, group);
-                    }
-                    modal.modal("hide");
-                }
-            )
-        });
     }
 
     /**

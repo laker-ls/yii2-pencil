@@ -123,20 +123,19 @@ class Image extends ActiveRecord
     /**
      * Создание миниатюры изображения.
      *
-     * @param $width
-     * @param $height
+     * @param $postImg array
      * @return string
      */
-    public function uploadMini($width, $height)
+    public function uploadMini($postImg)
     {
         EasyThumbnailImage::$cacheAlias = Yii::$app->getModule('pencil')->params['imagePath']['mini'];
 
         return EasyThumbnailImage::thumbnailFileUrl(
             $this->fullPath,
-            $width,
-            $height,
+            $postImg['width'],
+            $postImg['height'],
             EasyThumbnailImage::THUMBNAIL_OUTBOUND,
-            100
+            $postImg['quality']
         );
     }
 

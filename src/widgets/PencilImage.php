@@ -5,6 +5,8 @@ namespace lakerLS\pencil\widgets;
 use lakerLS\pencil\models\Image;
 use lakerLS\pencil\PencilAsset;
 use yii\base\Widget;
+use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use lakerLS\pencil\traits\AccessWidgetTrait;
 
@@ -29,11 +31,11 @@ class PencilImage extends Widget
     public $group;
 
     /**
-     * @var array передаем ширину и высоту для миниатюры, которую отображает виджет. Если параметр не указан,
-     * изображение будет отображаться в пропорциях оригинала.
+     * @var array обязательный параметр. Необходимо передать ширину и высоту для миниатюры, которую отображает виджет.
+     * Необязательным параметром является `quality`, который задает качество в процентах, по умолчанию 50.
      *
      * ПРИМЕР:
-     * PencilImage::begin(['group' => 'example', 'thumbnail' => ['width': 100, 'height': 50]]);
+     * PencilImage::begin(['group' => 'example', 'thumbnail' => ['width': 100, 'height': 50, 'quality': 70]]);
      */
     public $thumbnail;
 
@@ -226,6 +228,7 @@ class PencilImage extends Widget
             'data-group' => $this->group,
             'data-width' => $this->thumbnail['width'],
             'data-height' => $this->thumbnail['height'],
+            'data-quality' => ArrayHelper::getValue($this->thumbnail, 'quality', 50),
         ];
     }
 }

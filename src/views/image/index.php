@@ -6,7 +6,6 @@ use yii\helpers\Html;
 
 
 /** @var Image $model */
-/** @var string $group */
 /** @var string $width */
 /** @var string $height */
 ?>
@@ -37,9 +36,6 @@ use yii\helpers\Html;
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
-                    <?= Html::hiddenInput('Image[group]', $group) ?>
-                    <?= Html::hiddenInput('Image[width]', $width) ?>
-                    <?= Html::hiddenInput('Image[height]', $height) ?>
                 </div>
                 <div class="modal-footer">
                     <div class="row buttons">
