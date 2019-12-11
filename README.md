@@ -28,13 +28,13 @@
 Для установки запустите
 
 ```
-$ php composer.phar require laker-ls/yii2-pencil "~2.1.3"
+$ php composer.phar require laker-ls/yii2-pencil "~2.2.0"
 ```
 
 или добавьте в `composer.json` в раздел `require` следующую строку
 
 ```
-"laker-ls/yii2-pencil": "~2.1.3"
+"laker-ls/yii2-pencil": "~2.2.0"
 ```
 
 > Смотрите [список изменений](https://github.com/laker-ls/yii2-pencil/blob/master/CHANGE.md) для подробной информации о версиях.

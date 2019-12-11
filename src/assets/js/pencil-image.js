@@ -26,6 +26,7 @@ class AjaxGallery {
                     self.sortable(modal);
                     self.preview(modal);
                     self.deleteImg(modal);
+                    self.deleteImgAll(modal);
                     self.fileButton(modal);
                     self.submitForm(data, modal);
 
@@ -94,19 +95,19 @@ class AjaxGallery {
 
     /** Добавление изображений к уже существующим. */
     preview(modal) {
-        let self = this;
-        let imageInput = modal.find("input[type='file']");
-        let preview = modal.find(".preview");
+        let self = this,
+            imageInput = modal.find("input[type='file']"),
+            preview = modal.find(".preview");
 
         imageInput.on("change", function () {
-            let files = $(this)[0].files;
-            let error;
+            let files = $(this)[0].files,
+                error;
 
             preview.find(".pre-load").remove();
             for (let index = 0; index < files.length; index++) {
-                let reader = new FileReader();
-                let imagesCompare = preview.find(".cart");
-                let classInform;
+                let reader = new FileReader(),
+                    imagesCompare = preview.find(".cart"),
+                    classInform;
 
                 classInform = self.validateName(files[index].name, imagesCompare);
 
@@ -124,8 +125,8 @@ class AjaxGallery {
                 };
                 reader.readAsDataURL(files[index]);
 
-                let submitButton = modal.find("[type='submit']");
-                let errorLabel = $("#modal-pencil-image").find(".error-label");
+                let submitButton = modal.find("[type='submit']"),
+                    errorLabel = $("#modal-pencil-image").find(".error-label");
 
                 if (index + 1 === files.length && error === 'error') {
                     let message = 'Совпадение имен изображений!';
@@ -158,21 +159,17 @@ class AjaxGallery {
         return compareResult;
     }
 
-    /**
-     * Удаление изображений по нажатию на значек удаления.
-     * После удаления изображения изменения происходят только в "предпросмотре" но не в самом документе, поэтому
-     * рекомендуется нажимать отправку формы, для обновления страницы.
-     */
+    /** Удаление изображений по нажатию на значек удаления. */
     deleteImg(modal) {
-        let self = this;
-        let del = modal.find(".preview").find(".delete").find("a");
+        let self = this,
+            del = modal.find(".preview").find(".delete").find("a");
 
         del.on("click", function (event) {
             event.preventDefault();
-            let accept = confirm('Вы действительно хотите удалить изображение?');
-            let parent = $(this).closest(".cart");
-            let data = {"id": parent.attr("id"), "group": parent.attr("data-group")};
-            let group = parent.attr("data-group");
+            let accept = confirm('Вы действительно хотите удалить изображение?'),
+                parent = $(this).closest(".cart"),
+                data = {"id": parent.attr("id"), "group": parent.attr("data-group")},
+                group = parent.attr("data-group");
 
             if(accept) {
                 $.ajax({url: "/pencil/image/delete", type: "post", data: data, dataType: "json"}).done (
@@ -180,16 +177,22 @@ class AjaxGallery {
                         self.refreshDisplayImg(result, group);
                         parent.remove(); // удаление изображения из модального окна.
 
-                        let submitButton = modal.find("[type='submit']");
-                        let errorLabel = $("#modal-pencil-image").find(".error-label");
-                        let removedImgName = parent.find(".name-img").text();
-                        let matchingImage = $(".preview").find(".name-img:contains(" + removedImgName + ")");
-                        let matchingParent = matchingImage.closest(".cart");
-                        let classInform = self.validateName(removedImgName, matchingImage);
+                        // Собственное событие, в случае удаления изображения.
+                        let form = modal.find("form");
+
+                        form.trigger("img-delete");
+
+                        let submitButton = modal.find("[type='submit']"),
+                            errorLabel = $("#modal-pencil-image").find(".error-label"),
+                            removedImgName = parent.find(".name-img").text(),
+                            matchingImage = $(".preview").find(".name-img:contains(" + removedImgName + ")"),
+                            matchingParent = matchingImage.closest(".cart"),
+                            classInform = self.validateName(removedImgName, matchingImage);
 
                         matchingParent.attr({class: "col-lg-3 cart pre-load " + classInform});
 
                         let error = $("#modal-pencil-image").find(".cart").hasClass("error");
+
                         if (error === true) {
                             let message = 'Совпадение имен изображений!';
 
@@ -207,13 +210,49 @@ class AjaxGallery {
         });
     }
 
+    /** Удаление всех изображений в группе. */
+    deleteImgAll(modal) {
+        let self = this,
+            form = modal.find("form"),
+            carts = modal.find(".cart"),
+            group = modal.find("[data-group]").data("group"),
+            deleteAll = modal.find(".delete-all");
+
+        if (group === undefined) {
+            deleteAll.attr({disabled: true});
+        }
+
+        form.on("img-delete", function () {
+            let issetImg = modal.find(".cart").length;
+
+            if (issetImg) {
+                deleteAll.attr({disabled: false});
+            } else {
+                deleteAll.attr({disabled: true});
+            }
+        });
+
+        deleteAll.on("click", function () {
+            if (confirm('Вы действительно хотите удалить все изображения?')) {
+                $.ajax({url: "/pencil/image/delete-all", type: "post", data: {group: group}, dataType: "json"}).done(
+                    (result) => {
+                        if (result) {
+                            carts.remove();
+                            self.refreshDisplayImg(null, group);
+                            $(this).attr({disabled: true});
+                        }
+                    }
+                )
+            }
+        });
+    }
+
     /**
      * Отображение новых изображений, после загрузки/удаления изображений.
      * Все изображения текущей группы удаляются и загружаются вновь через ajax.
      */
     refreshDisplayImg(result, group) {
         let container = $("[data-target='example-" + group + "']");
-        let button = $('[data-modal="pencil-image"][data-group="' + group + '"]');
 
         container.nextUntil('[data-modal="pencil-image"]').remove();
 
@@ -231,8 +270,8 @@ class AjaxGallery {
 
     /** Стилизация кнопки для выбора изображений. */
     fileButton(modal) {
-        let defaultInput = modal.find(".default-input");
-        let newInput = modal.find(".new-input");
+        let defaultInput = modal.find(".default-input"),
+            newInput = modal.find(".new-input");
 
         defaultInput.on("mouseover", function () {
             newInput.css({"background-color": "#218838"});

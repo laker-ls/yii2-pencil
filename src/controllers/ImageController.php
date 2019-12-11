@@ -114,4 +114,18 @@ class ImageController extends Controller
         $result = Image::find()->where(['group' => $post['group']])->asArray()->orderBy(['position' => SORT_DESC])->all();
         return json_encode($result);
     }
+
+    /**
+     * Удаление всех изображений конкретной группы.
+     * @return integer|boolean
+     */
+    public function actionDeleteAll()
+    {
+        $post = Yii::$app->request->post();
+
+        $images = Image::deleteAll(['group' => $post['group']]);
+        Yii::$app->cache->flush();
+
+        return json_encode($images);
+    }
 }

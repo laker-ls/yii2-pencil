@@ -45,6 +45,7 @@ use yii\helpers\Html;
                         </div>
                         <div class="col-lg-8 action">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                            <button type="button" class="btn btn-danger delete-all">Удалить все</button>
                             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
                         </div>
                     </div>
