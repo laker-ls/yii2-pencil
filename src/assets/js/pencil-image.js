@@ -1,12 +1,13 @@
+/**
+ * Класс реализует работу с изображениями (crud) в модальном окне.
+ */
+
 $(document.body).ready(function () {
     let gallery = new AjaxGallery();
 
     gallery.index();
 });
 
-/**
- * Класс реализует работу с изображениями (crud) в модальном окне.
- */
 class AjaxGallery {
 
     /** Отображение формы для изображений в модальном окне */
@@ -15,9 +16,9 @@ class AjaxGallery {
 
         $('[data-modal="pencil-image"]').on("click", function (event) {
             event.preventDefault();
-            
+
             let data = $(this).data();
-            
+
             $.ajax({url: "/pencil/image/index", type: "get", data: data}).done(
                 (result) => {
                     let modal = $(result);
@@ -33,6 +34,8 @@ class AjaxGallery {
                     modal.on("hidden.bs.modal", function () {
                         $(this).remove();
                     });
+
+
                 }
             );
         });
@@ -97,22 +100,26 @@ class AjaxGallery {
     preview(modal) {
         let self = this,
             imageInput = modal.find("input[type='file']"),
-            preview = modal.find(".preview");
+            preview = modal.find(".preview"),
+            submitButton = modal.find("[type='submit']"),
+            errorLabel = modal.find(".error-label");
 
         imageInput.on("change", function () {
             let files = $(this)[0].files,
-                error;
+                validateResult = "success";
 
             preview.find(".pre-load").remove();
+            errorLabel.css({display: "none"});
+            submitButton.attr({disabled: false});
+
             for (let index = 0; index < files.length; index++) {
                 let reader = new FileReader(),
                     imagesCompare = preview.find(".cart"),
                     classInform;
 
                 classInform = self.validateName(files[index].name, imagesCompare);
-
-                if (classInform === 'error') {
-                    error = classInform;
+                if (classInform === "error") {
+                    validateResult = "error";
                 }
 
                 reader.onload = function (event) {
@@ -124,47 +131,17 @@ class AjaxGallery {
                     );
                 };
                 reader.readAsDataURL(files[index]);
-
-                let submitButton = modal.find("[type='submit']"),
-                    errorLabel = $("#modal-pencil-image").find(".error-label");
-
-                if (index + 1 === files.length && error === 'error') {
-                    let message = 'Совпадение имен изображений!';
-
-                    modal.find(".error-label").append(message);
-                    submitButton.attr({"disabled": true});
-                    errorLabel.css({display: "block"});
-                } else {
-                    modal.find(".action").find("div").remove();
-                    submitButton.attr({"disabled": false});
-                    errorLabel.css({display: "none"});
-                }
             }
-        })
-    }
-
-    /** Проверка на совпадение имен. */
-    validateName(imageName, imagesCompare) {
-        let compareResult = "success";
-
-        imagesCompare.each(function (key, img) {
-            let name = $(img).find(".name-img").text();
-
-            if (imageName === name) {
-                compareResult = "error";
-                return false;
-            }
+            self.validateDisplay(modal, validateResult);
         });
-
-        return compareResult;
     }
 
     /** Удаление изображений по нажатию на значек удаления. */
     deleteImg(modal) {
         let self = this,
-            del = modal.find(".preview").find(".delete").find("a");
+            deleteButton = modal.find(".preview").find(".delete").find("a");
 
-        del.on("click", function (event) {
+        deleteButton.on("click", function (event) {
             event.preventDefault();
             let accept = confirm('Вы действительно хотите удалить изображение?'),
                 parent = $(this).closest(".cart"),
@@ -174,36 +151,26 @@ class AjaxGallery {
             if(accept) {
                 $.ajax({url: "/pencil/image/delete", type: "post", data: data, dataType: "json"}).done (
                     (result) => {
-                        self.refreshDisplayImg(result, group);
-                        parent.remove(); // удаление изображения из модального окна.
-
-                        // Собственное событие, в случае удаления изображения.
-                        let form = modal.find("form");
-
-                        form.trigger("img-delete");
-
-                        let submitButton = modal.find("[type='submit']"),
-                            errorLabel = $("#modal-pencil-image").find(".error-label"),
+                        let form = modal.find("form"),
                             removedImgName = parent.find(".name-img").text(),
                             matchingImage = $(".preview").find(".name-img:contains(" + removedImgName + ")"),
                             matchingParent = matchingImage.closest(".cart"),
-                            classInform = self.validateName(removedImgName, matchingImage);
+                            classInform = self.validateName(removedImgName, matchingImage),
+                            cartError;
+
+                        self.refreshDisplayImg(result, group);
+                        parent.remove();
+                        form.trigger("img-delete");
 
                         matchingParent.attr({class: "col-lg-3 cart pre-load " + classInform});
 
-                        let error = $("#modal-pencil-image").find(".cart").hasClass("error");
-
-                        if (error === true) {
-                            let message = 'Совпадение имен изображений!';
-
-                            modal.find(".error-label").append(message);
-                            submitButton.attr({"disabled": true});
-                            errorLabel.css({display: "block"});
+                        cartError = $("#modal-pencil-image").find(".cart.error");
+                        if (cartError.length) {
+                            classInform = 'error';
                         } else {
-                            modal.find(".action").find("div").remove();
-                            submitButton.attr({"disabled": false});
-                            errorLabel.css({display: "none"});
+                            classInform = 'success';
                         }
+                        self.validateDisplay(modal, classInform);
                     }
                 );
             }
@@ -233,38 +200,22 @@ class AjaxGallery {
         });
 
         deleteAll.on("click", function () {
-            if (confirm('Вы действительно хотите удалить все изображения?')) {
+            if (confirm("Вы действительно хотите удалить все изображения?")) {
                 $.ajax({url: "/pencil/image/delete-all", type: "post", data: {group: group}, dataType: "json"}).done(
                     (result) => {
+                        let error = modal.find(".cart.error");
+
                         if (result) {
                             carts.remove();
                             self.refreshDisplayImg(null, group);
                             $(this).attr({disabled: true});
+
+                            error.removeClass("error").addClass("success");
+                            self.validateDisplay(modal, "success");
                         }
                     }
                 )
             }
-        });
-    }
-
-    /**
-     * Отображение новых изображений, после загрузки/удаления изображений.
-     * Все изображения текущей группы удаляются и загружаются вновь через ajax.
-     */
-    refreshDisplayImg(result, group) {
-        let container = $("[data-target='example-" + group + "']");
-
-        container.nextUntil('[data-modal="pencil-image"]').remove();
-
-        $(result).each(function (key, img) { // берем шаблон из html, заполняем его и дублируем в нужное место.
-            let templateImg = $('[data-target="example-' + img.group + '"]');
-            let instanceTemplateImg = templateImg.html()
-                .replace(/#{url-mini}/gi, img.mini)
-                .replace(/#{url-full}/gi, img.full)
-                .replace(/#{alt}/gi, img.alt)
-                .replace(/#{group}/gi, img.group);
-
-            container.after(instanceTemplateImg);
         });
     }
 
@@ -279,6 +230,67 @@ class AjaxGallery {
 
         defaultInput.on("mouseout", function () {
             newInput.css({"background-color": "#28a745"});
+        });
+    }
+
+    /** Проверка на совпадение имен. */
+    validateName(imageName, imagesCompare) {
+        let compareResult = "success";
+
+        imagesCompare.each(function (key, img) {
+            let name = $(img).find(".name-img").text();
+
+            if (imageName === name) {
+                compareResult = "error";
+                return false;
+            }
+        });
+
+        return compareResult;
+    }
+
+    /** Отображение ошибок валидации */
+    validateDisplay(modal, compareResult) {
+        let submitButton = modal.find("[type='submit']"),
+            errorLabel = modal.find(".error-label"),
+            message = 'Совпадение имен изображений!';
+
+        if (compareResult === 'success') {
+            modal.find(".action").find("div").remove();
+            errorLabel.css({display: "none"});
+
+            setTimeout(function () {
+                if (modal.find(".cart.success").length !== 0) {
+                    submitButton.attr({"disabled": false});
+                } else {
+                    submitButton.attr({"disabled": true});
+                }
+            }, 10);
+        } else if (compareResult === 'error') {
+            modal.find(".error-label").html(message);
+            submitButton.attr({"disabled": true});
+            errorLabel.css({display: "block"});
+        }
+    }
+
+    /**
+     * Отображение новых изображений, после загрузки/удаления изображений.
+     * Все изображения текущей группы удаляются и загружаются вновь через ajax.
+     */
+    refreshDisplayImg(result, group) {
+        let container = $("[data-target='example-" + group + "']");
+
+        container.nextUntil('.pencil-gallery').remove();
+
+        $(result).each(function (key, img) { // берем шаблон из html, заполняем его и дублируем в нужное место.
+            let templateImg = $('[data-target="example-' + img.group + '"]');
+            let instanceTemplateImg = templateImg.html()
+                .replace(/#{url-mini}/gi, img.mini)
+                .replace(/#{url-full}/gi, img.full)
+                .replace(/#{alt}/gi, img.alt)
+                .replace(/#{group}/gi, img.group);
+
+            container.after(instanceTemplateImg);
         });
     }
 }

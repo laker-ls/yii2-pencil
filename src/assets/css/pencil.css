@@ -1,3 +1,13 @@
+/************** Общие *********************/
+
+#modal-pencil-text .modal-header, #modal-pencil-image .modal-header {
+    display: flex;
+}
+
+#modal-pencil-text h5, #modal-pencil-image h5 {
+    flex-grow: 1;
+}
+
 /************** Текст *********************/
 
 .pencil-button {
@@ -11,11 +21,13 @@
     text-decoration-color: #0069d9;
 }
 
-.pencil-form textarea {
+#modal-pencil-text textarea {
+    width: 100%;
     height: 200px;
+    resize: vertical;
 }
 
-/************** Галеря ********************/
+/************** Изображения ********************/
 
 .pencil-gallery {
     margin: 20px 0;
@@ -24,19 +36,20 @@
 
 .big-gallery-button {
     background: #007bff;
-    color: white;
-    text-decoration: none;
+    color: #fff;
     padding: 10px 15px;
     border-radius: 3px;
     transition: 300ms;
 }
 
-.big-gallery-button:hover {
+.big-gallery-button:hover, .big-gallery-button:focus {
     background: #0069d9;
+    color: #fff;
+    text-decoration: none;
 }
 
 .small-gallery-button {
-    color: white !important;
+    color: #fff !important;
     background: #007bff !important;
     position: absolute !important;
     bottom: 0 !important;
@@ -74,7 +87,7 @@
     max-width: 23%;
     border: 1px solid #00000040;
     box-shadow: 0 0 5px #00000036;
-    background-color: white;
+    background-color: #fff;
     float: left;
 }
 
@@ -84,7 +97,7 @@
 
 #modal-pencil-image .preview .delete a {
     text-decoration: none;
-    color: black;
+    color: #000;
 }
 
 #modal-pencil-image .preview p {
@@ -129,7 +142,7 @@
 
 #modal-pencil-image .modal-footer .new-input {
     background-color: #28a745;
-    color: white;
+    color: #fff;
     width: 210px;
     text-align: center;
     border-radius: 5px;

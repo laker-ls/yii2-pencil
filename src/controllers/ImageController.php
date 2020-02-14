@@ -75,9 +75,9 @@ class ImageController extends Controller
 
             $imageModel = new Image();
             $activeRecords = $imageModel->findByGroup($post['Image']['group']);
+            /** @var Image $model */
             foreach ($activeRecords as $model) {
-                $fullName = PencilHelper::fullNameImg($model);
-                $model->position = $post['Position'][$fullName];
+                $model->position = $post['Position'][$model->fullName()];
                 if ($model->update()) {
                     Yii::$app->cache->flush();
                 }

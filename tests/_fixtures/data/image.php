@@ -1,0 +1,60 @@
+<?php
+
+return array(
+    array(
+        "id" => 20,
+        "group" => "3-project-graf",
+        "full" => "/upload/gallery-full/00/0049e7671b8c86ac6d5002ed5e6ec01a.jpg",
+        "mini" => "/upload/gallery-mini/25/2575e6b5b7360ee44074b73e4b1182b5.jpg",
+        "alt" => "9ab449d00f707943b9220e8e19fa7fa2",
+        "position" => 5,
+    ),
+    array(
+        "id" => 21,
+        "group" => "3-project-graf",
+        "full" => "/upload/gallery-full/43/43cee4ea00b0f361e8389f0c2b71f3e9.jpg",
+        "mini" => "/upload/gallery-mini/0c/0c6eff900939c53b3db91491568cc9ba.jpg",
+        "alt" => "71cbf32691eb3ae8a3d14203068d8151",
+        "position" => 2,
+    ),
+    array(
+        "id" => 22,
+        "group" => "3-project-graf",
+        "full" => "/upload/gallery-full/42/423b955e0e1a494ad0a7cf958571eb23.jpg",
+        "mini" => "/upload/gallery-mini/11/119ef6c0629f2da041ce98ea9503dba3.jpg",
+        "alt" => "463aac8d21a5df766db0e7aa8955d8e6",
+        "position" => 3,
+    ),
+    array(
+        "id" => 27,
+        "group" => "3-project-baron",
+        "full" => "/upload/gallery-full/51/51471a830849be41c6bf5c7387e885b5.jpg",
+        "mini" => "/upload/gallery-mini/25/25c5ffb620319540cb2858a6bef4b775.jpg",
+        "alt" => "39d85263d072fc27b6704ecef0a45cbc",
+        "position" => 5,
+    ),
+    array(
+        "id" => 58,
+        "group" => "3-news",
+        "full" => "/upload/gallery-full/4b/4b99bb243860bb7c313ce913369d6764.jpg",
+        "mini" => "/upload/gallery-mini/f5/f5d5578b320214b6c5c5c1770ba0527b.jpg",
+        "alt" => "7a779b88863bb734b5f8f2a9e76bb401",
+        "position" => 3,
+    ),
+    array(
+        "id" => 118,
+        "group" => "3-developers",
+        "full" => "/upload/gallery-full/78/78d74debe4d9daa4c170e1ad1f5cd40b.jpg",
+        "mini" => "/upload/gallery-mini/e1/e1de52e8f88c9b02586b3ba58a97b895.jpg",
+        "alt" => "366cba481b0237d12ef88e844275ecf7",
+        "position" => 2,
+    ),
+    array(
+        "id" => 120,
+        "group" => "3-gallery",
+        "full" => "/upload/gallery-full/63/63ec2ab4bfc057234681daa3765ced3b.jpg",
+        "mini" => "/upload/gallery-mini/f0/f037af3529339bec5b75328cb9fdf63f.jpg",
+        "alt" => "2",
+        "position" => 1,
+    ),
+);

@@ -1,11 +1,10 @@
 <?php
 
-use lakerLS\pencil\helpers\PencilHelper;
 use lakerLS\pencil\models\Image;
 use yii\helpers\Html;
 
-
-/** @var Image $model */
+/** @var array $model */
+/** @var Image $image */
 /** @var string $width */
 /** @var string $height */
 ?>
@@ -31,7 +30,7 @@ use yii\helpers\Html;
                                         <a href="#">✖</a>
                                     </div>
                                     <img class="img-fluid" src="<?= $image->full ?>" alt="<?= $image->alt ?>">
-                                    <p class="name-img"><?= PencilHelper::fullNameImg($image)?></p>
+                                    <p class="name-img"><?= $image->fullName() ?></p>
                                 </div>
                             <?php endif; ?>
                         <?php endforeach; ?>
@@ -46,7 +45,7 @@ use yii\helpers\Html;
                         <div class="col-lg-8 action">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
                             <button type="button" class="btn btn-danger delete-all">Удалить все</button>
-                            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
+                            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary', 'disabled' => true]) ?>
                         </div>
                     </div>
                 </div>

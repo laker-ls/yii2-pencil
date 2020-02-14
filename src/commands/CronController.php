@@ -33,7 +33,7 @@ class CronController extends Controller
         $aliasWeb = __DIR__ . '/../../../../../web/';
 
         foreach ($imgPath as $directory) {
-            $directory = $aliasWeb . $directory . '/'; // TODO: возможно есть возможность убрать.
+            $directory = $aliasWeb . $directory . '/';
 
             $foldersImage = scandir($directory);
             unset($foldersImage[0], $foldersImage[1]);
