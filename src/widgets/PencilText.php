@@ -104,8 +104,10 @@ class PencilText extends Widget
      */
     public function run()
     {
+        $categoryId = !empty($this->view->context->categoryId) ? $this->view->context->categoryId : null;
+
         $model = new TextModel();
-        $model = $model->findModel($this->view->context->categoryId, $this->id);
+        $model = $model->findModel($this->id, $categoryId);
 
         if (!empty($model->text)) {
             $lineBreak = str_replace(["\r\n", "\r", "\n"], '<br />', $model->text);

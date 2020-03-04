@@ -55,7 +55,7 @@ class Text extends ActiveRecord
      * @param string $idName
      * @return array|ActiveRecord
      */
-    public function findModel($categoryId = null, $idName)
+    public function findModel($idName, $categoryId = null)
     {
         $records = self::find()
             ->where(['category_id' => $categoryId])
