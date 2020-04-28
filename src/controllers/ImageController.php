@@ -48,7 +48,7 @@ class ImageController extends Controller
      * Добавление изображений в базу данных, а так же редактирование позиции существующих.
      * Позиция изображения определяется с помощью данных в массиве связью ['имя изображения' => 'позиция'].
      *
-     * @return \yii\web\Response
+     * @return string
      * @throws Exception
      */
     public function actionCreateUpdate()
@@ -65,7 +65,15 @@ class ImageController extends Controller
                 $model->full = $model->uploadFull();
                 $model->mini = $model->uploadMini($post['Image']);
                 $model->alt = $image->baseName;
-                $model->position = $post['Position'][$image->name];
+                try {
+                    $model->position = $post['Position'][$image->name];
+                } catch (Exception $exception) {
+                    $result['status'] = 'error';
+                    $result['message'] = 'В наименовании недопустимы точки, за исключением точки перед расширением изображения.';
+
+                    return json_encode($result);
+                }
+
                 if ($model->save()) {
                     Yii::$app->cache->flush();
                 } else {
@@ -87,11 +95,12 @@ class ImageController extends Controller
                 ->orderBy(['position' => SORT_DESC])
                 ->asArray()
                 ->all();
-
-            return json_encode($result);
         } else {
-            throw new Exception('Данные методом POST небыли получены.');
+            $result['status'] = 'error';
+            $result['message'] = 'Данные методом POST небыли получены. Обратитесь к разработчику.';
         }
+
+        return json_encode($result);
     }
 
     /**

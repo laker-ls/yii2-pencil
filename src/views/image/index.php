@@ -7,6 +7,8 @@ use yii\helpers\Html;
 /** @var Image $image */
 /** @var string $width */
 /** @var string $height */
+
+$bundle = \lakerLS\pencil\PencilAsset::register($this);
 ?>
 
 <div class="modal fade" id="modal-pencil-image" tabindex="-1" role="dialog" aria-labelledby="modal-pencil" aria-hidden="true">
@@ -29,7 +31,7 @@ use yii\helpers\Html;
                                     <div class="delete">
                                         <a href="#">✖</a>
                                     </div>
-                                    <img class="img-fluid" src="<?= $image->full ?>" alt="<?= $image->alt ?>">
+                                    <img class="img-fluid" src="<?= $image->mini ?>" alt="<?= $image->alt ?>">
                                     <p class="name-img"><?= $image->fullName() ?></p>
                                 </div>
                             <?php endif; ?>
@@ -45,7 +47,11 @@ use yii\helpers\Html;
                         <div class="col-lg-8 action">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
                             <button type="button" class="btn btn-danger delete-all">Удалить все</button>
-                            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary', 'disabled' => true]) ?>
+                            <?= Html::submitButton('Сохранить', [
+                                'class' => 'btn btn-primary',
+                                'disabled' => true,
+                                'data-load-img' => $bundle->baseUrl . '/image/load-icon.svg'
+                            ]) ?>
                         </div>
                     </div>
                 </div>

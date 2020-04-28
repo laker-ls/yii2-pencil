@@ -159,7 +159,7 @@ class Image extends ActiveRecord
      */
     public function fullName()
     {
-        $name = $this->alt;
+        $name = mb_substr($this->alt, 0, 27);
         $extension = mb_strstr($this->full, '.');
 
         return $name . $extension;

@@ -53,8 +53,13 @@ class AjaxGallery {
 
         form.on("submit", function(event) {
             event.preventDefault();
-            let formData = new FormData(this),
-                uploadImg = modal.find(".preview").find(".cart");
+            let uploadIcon,
+                formData = new FormData(this),
+                uploadImg = modal.find(".preview").find(".cart"),
+                buttonSubmit = $(this).find("button[type=submit]");
+
+            uploadIcon = buttonSubmit.data('load-img');
+            buttonSubmit.html('<img class="loading-pencil" src="' + uploadIcon + '">');
 
             uploadImg.each(function (key, img) { // Добавляем в массив данные о позиции каждого изображения.
                 let nameImg = $(img).find(".name-img").text();
@@ -78,12 +83,15 @@ class AjaxGallery {
                 dataType: "json",
             }).done(
                 (result) => {
-                    if (result[0] !== undefined) {
+                    buttonSubmit.html("Сохранить");
+                    if (result.status === "error") {
+                        self.validateDisplay(modal, result.status, result.message);
+                    } else if (result[0] !== undefined) {
                         let group = result[0].group;
 
                         self.refreshDisplayImg(result, group);
+                        modal.modal("hide");
                     }
-                    modal.modal("hide");
                 }
             )
         });
@@ -91,9 +99,19 @@ class AjaxGallery {
 
     /** Сортировка изображений с помощью jquery UI. Позиции изображений сохраняются в базу данных. */
     sortable(modal) {
-        let container = modal.find(".preview");
+        let self = this,
+            container = modal.find(".preview"),
+            validateResult = "success";
 
-        container.sortable({"containment": "parent", "tolerance": "pointer", "scroll": false});
+        container.sortable({
+            "containment": "parent",
+            "tolerance": "pointer",
+            "scroll": false,
+
+            "update": function (event, ui) {
+                self.validateDisplay(modal, validateResult);
+            }
+        });
     }
 
     /** Добавление изображений к уже существующим. */
@@ -115,7 +133,20 @@ class AjaxGallery {
             for (let index = 0; index < files.length; index++) {
                 let reader = new FileReader(),
                     imagesCompare = preview.find(".cart"),
-                    classInform;
+                    name = files[index].name.split(".")[0],
+                    extension = files[index].name.split(".")[1],
+                    classInform,
+                    miniName,
+                    fullName;
+
+                if (name.length > 27) {
+                    miniName = name.substring(0, 27);
+                } else {
+                    miniName = name ;
+                }
+                fullName = miniName + "." + extension;
+
+
 
                 classInform = self.validateName(files[index].name, imagesCompare);
                 if (classInform === "error") {
@@ -126,7 +157,7 @@ class AjaxGallery {
                     preview.append(
                         '<div class="col-lg-3 cart pre-load ' + classInform + '">' +
                             '<img class="img-fluid" src="' + event.target.result + '"> ' +
-                            '<p class="name-img">' + files[index].name + '</p>' +
+                            '<p class="name-img">' + fullName + '</p>' +
                         '</div>'
                     );
                 };
@@ -250,17 +281,20 @@ class AjaxGallery {
     }
 
     /** Отображение ошибок валидации */
-    validateDisplay(modal, compareResult) {
+    validateDisplay(modal, compareResult, message) {
         let submitButton = modal.find("[type='submit']"),
-            errorLabel = modal.find(".error-label"),
+            errorLabel = modal.find(".error-label");
+
+        if (!message) {
             message = 'Совпадение имен изображений!';
+        }
 
         if (compareResult === 'success') {
             modal.find(".action").find("div").remove();
             errorLabel.css({display: "none"});
 
             setTimeout(function () {
-                if (modal.find(".cart.success").length !== 0) {
+                if (modal.find(".cart.error").length === 0) {
                     submitButton.attr({"disabled": false});
                 } else {
                     submitButton.attr({"disabled": true});

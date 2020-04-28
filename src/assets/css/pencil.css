@@ -91,6 +91,10 @@
     float: left;
 }
 
+#modal-pencil-image .preview .cart img {
+    height: 164px;
+}
+
 #modal-pencil-image .preview .delete {
     text-align: right;
 }
@@ -174,4 +178,8 @@
 #modal-pencil-image img {
     max-width: 100% !important;
     height: auto;
+}
+
+#modal-pencil-image .modal-footer .btn-primary {
+    min-width: 103px;
 }

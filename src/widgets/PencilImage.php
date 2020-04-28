@@ -34,7 +34,7 @@ class PencilImage extends Widget
      * Необязательным параметром является `quality`, который задает качество в процентах, по умолчанию 50.
      *
      * ПРИМЕР:
-     * PencilImage::begin(['group' => 'example', 'thumbnail' => ['width': 100, 'height': 50, 'quality': 70]]);
+     * PencilImage::begin(['group' => 'example', 'thumbnail' => ['width' => 100, 'height' => 50, 'quality' => 70]]);
      */
     public $thumbnail;
 
