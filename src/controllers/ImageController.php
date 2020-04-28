@@ -65,19 +65,14 @@ class ImageController extends Controller
                 $model->full = $model->uploadFull();
                 $model->mini = $model->uploadMini($post['Image']);
                 $model->alt = $image->baseName;
-                try {
-                    $model->position = $post['Position'][$image->name];
-                } catch (Exception $exception) {
-                    $result['status'] = 'error';
-                    $result['message'] = 'В наименовании недопустимы точки, за исключением точки перед расширением изображения.';
-
-                    return json_encode($result);
-                }
-
+                $model->position = $post['Position'][$image->name];
                 if ($model->save()) {
                     Yii::$app->cache->flush();
                 } else {
-                    var_dump($model->errors);
+                    $result['status'] = 'error';
+                    $result['message'] = $model->errors[0];
+
+                    return $result;
                 }
             }
 

@@ -31,8 +31,10 @@ $bundle = \lakerLS\pencil\PencilAsset::register($this);
                                     <div class="delete">
                                         <a href="#">✖</a>
                                     </div>
-                                    <img class="img-fluid" src="<?= $image->mini ?>" alt="<?= $image->alt ?>">
-                                    <p class="name-img"><?= $image->fullName() ?></p>
+                                    <div class="img-container">
+                                        <img src="<?= $image->full ?>" alt="<?= $image->alt ?>">
+                                    </div>
+                                    <p class="name-img" data-full-name="<?= $image->fullName() ?>"><?= $image->shortName() ?></p>
                                 </div>
                             <?php endif; ?>
                         <?php endforeach; ?>

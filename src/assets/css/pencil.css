@@ -91,8 +91,16 @@
     float: left;
 }
 
-#modal-pencil-image .preview .cart img {
+#modal-pencil-image .preview .img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 164px;
+}
+
+#modal-pencil-image .preview .cart img {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 #modal-pencil-image .preview .delete {
@@ -173,11 +181,6 @@
     font-weight: 900;
     border-radius: 0 0 5px 5px;
     border: 1px solid #ebcccc;
-}
-
-#modal-pencil-image img {
-    max-width: 100% !important;
-    height: auto;
 }
 
 #modal-pencil-image .modal-footer .btn-primary {

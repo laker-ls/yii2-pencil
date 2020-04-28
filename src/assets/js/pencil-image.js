@@ -59,10 +59,10 @@ class AjaxGallery {
                 buttonSubmit = $(this).find("button[type=submit]");
 
             uploadIcon = buttonSubmit.data('load-img');
-            buttonSubmit.html('<img class="loading-pencil" src="' + uploadIcon + '">');
+            buttonSubmit.html(`<img class="loading-pencil" src="${uploadIcon}">`);
 
             uploadImg.each(function (key, img) { // Добавляем в массив данные о позиции каждого изображения.
-                let nameImg = $(img).find(".name-img").text();
+                let nameImg = $(img).find(".name-img").data("full-name");
 
                 formData.set("Position", nameImg);
                 formData.set("Position[" + nameImg + "]", key + 1);
@@ -136,15 +136,15 @@ class AjaxGallery {
                     name = files[index].name.split(".")[0],
                     extension = files[index].name.split(".")[1],
                     classInform,
-                    miniName,
+                    shortName,
                     fullName;
 
                 if (name.length > 27) {
-                    miniName = name.substring(0, 27);
+                    shortName = name.substring(0, 27) + extension;
                 } else {
-                    miniName = name ;
+                    shortName = name + extension;
                 }
-                fullName = miniName + "." + extension;
+                fullName = name + "." + extension;
 
 
 
@@ -155,10 +155,14 @@ class AjaxGallery {
 
                 reader.onload = function (event) {
                     preview.append(
-                        '<div class="col-lg-3 cart pre-load ' + classInform + '">' +
-                            '<img class="img-fluid" src="' + event.target.result + '"> ' +
-                            '<p class="name-img">' + fullName + '</p>' +
-                        '</div>'
+                        `
+                        <div class="col-lg-3 cart pre-load ${classInform}">
+                            <div class="img-container">
+                                <img src="${event.target.result}">
+                            </div>
+                            <p class="name-img" data-full-name="${fullName}">${shortName}</p>
+                        </div>
+                        `
                     );
                 };
                 reader.readAsDataURL(files[index]);

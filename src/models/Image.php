@@ -159,6 +159,17 @@ class Image extends ActiveRecord
      */
     public function fullName()
     {
+        $name = $this->alt;
+        $extension = mb_strstr($this->full, '.');
+
+        return $name . $extension;
+    }
+
+    /**
+     * Короткое имя изображения, с расширением.
+     */
+    public function shortName()
+    {
         $name = mb_substr($this->alt, 0, 27);
         $extension = mb_strstr($this->full, '.');
 
