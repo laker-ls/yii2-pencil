@@ -8,7 +8,7 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: http://test/
+            url: http://yii2-pencil-tests/
             browser: chrome
             window_size: 1920x1080
             capabilities:

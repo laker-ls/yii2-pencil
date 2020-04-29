@@ -34,8 +34,6 @@ class AjaxGallery {
                     modal.on("hidden.bs.modal", function () {
                         $(this).remove();
                     });
-
-
                 }
             );
         });
@@ -84,13 +82,11 @@ class AjaxGallery {
             }).done(
                 (result) => {
                     buttonSubmit.html("Сохранить");
-                    if (result.status === "error") {
-                        self.validateDisplay(modal, result.status, result.message);
-                    } else if (result[0] !== undefined) {
-                        let group = result[0].group;
-
-                        self.refreshDisplayImg(result, group);
+                    if (result.status === "success") {
+                        self.refreshDisplayImg(result.images, result.images[0].group);
                         modal.modal("hide");
+                    } else if (result.status === "error") {
+                        self.validateDisplay(modal, result.status, result.message);
                     }
                 }
             )
@@ -128,7 +124,6 @@ class AjaxGallery {
 
             preview.find(".pre-load").remove();
             errorLabel.css({display: "none"});
-            submitButton.attr({disabled: false});
 
             for (let index = 0; index < files.length; index++) {
                 let reader = new FileReader(),
@@ -142,11 +137,9 @@ class AjaxGallery {
                 if (name.length > 27) {
                     shortName = name.substring(0, 27) + extension;
                 } else {
-                    shortName = name + extension;
+                    shortName = name + "." + extension;
                 }
                 fullName = name + "." + extension;
-
-
 
                 classInform = self.validateName(files[index].name, imagesCompare);
                 if (classInform === "error") {
@@ -167,7 +160,7 @@ class AjaxGallery {
                 };
                 reader.readAsDataURL(files[index]);
             }
-            self.validateDisplay(modal, validateResult);
+            self.validateDisplay(modal, validateResult, null, files.length);
         });
     }
 
@@ -190,22 +183,15 @@ class AjaxGallery {
                             removedImgName = parent.find(".name-img").text(),
                             matchingImage = $(".preview").find(".name-img:contains(" + removedImgName + ")"),
                             matchingParent = matchingImage.closest(".cart"),
-                            classInform = self.validateName(removedImgName, matchingImage),
-                            cartError;
+                            classInform = self.validateName(removedImgName, matchingImage);
 
-                        self.refreshDisplayImg(result, group);
+                        self.refreshDisplayImg(result['images'], group);
                         parent.remove();
                         form.trigger("img-delete");
 
                         matchingParent.attr({class: "col-lg-3 cart pre-load " + classInform});
 
-                        cartError = $("#modal-pencil-image").find(".cart.error");
-                        if (cartError.length) {
-                            classInform = 'error';
-                        } else {
-                            classInform = 'success';
-                        }
-                        self.validateDisplay(modal, classInform);
+                        self.validateDisplay(modal, result['status'], result['message'], 0);
                     }
                 );
             }
@@ -246,7 +232,7 @@ class AjaxGallery {
                             $(this).attr({disabled: true});
 
                             error.removeClass("error").addClass("success");
-                            self.validateDisplay(modal, "success");
+                            self.validateDisplay(modal, result.status, result.message, 0);
                         }
                     }
                 )
@@ -285,42 +271,57 @@ class AjaxGallery {
     }
 
     /** Отображение ошибок валидации */
-    validateDisplay(modal, compareResult, message) {
-        let submitButton = modal.find("[type='submit']"),
-            errorLabel = modal.find(".error-label");
+    validateDisplay(modal, status, receivedMessage = null, filesLength = 1) {
+        setTimeout(function () {
+            let submitButton = modal.find("[type='submit']"),
+                errorLabel = modal.find(".error-label"),
+                result = true,
+                cartSuccess = modal.find(".cart.success"),
+                cartError = modal.find(".cart.error"),
+                messageError;
 
-        if (!message) {
-            message = 'Совпадение имен изображений!';
-        }
+            if (filesLength === 0) {
+                result = false;
+            }
+            if (cartSuccess.length !== 0) {
+                result = true;
+            }
+            if (cartError.length !== 0) {
+                result = false;
+                messageError = 'Совпадение имен изображений!';
+            }
 
-        if (compareResult === 'success') {
-            modal.find(".action").find("div").remove();
-            errorLabel.css({display: "none"});
+            if (result === true) {
+                submitButton.attr({"disabled": false});
+            } else {
+                submitButton.attr({"disabled": true});
+            }
 
-            setTimeout(function () {
-                if (modal.find(".cart.error").length === 0) {
-                    submitButton.attr({"disabled": false});
-                } else {
-                    submitButton.attr({"disabled": true});
-                }
-            }, 10);
-        } else if (compareResult === 'error') {
-            modal.find(".error-label").html(message);
-            submitButton.attr({"disabled": true});
-            errorLabel.css({display: "block"});
-        }
+
+            if (status === "error" && receivedMessage !== null) {
+                messageError = receivedMessage;
+            }
+
+            if (messageError) {
+                modal.find(".error-label").html(messageError);
+                errorLabel.css({display: "block"});
+            } else {
+                modal.find(".action").find("div").remove();
+                errorLabel.css({display: "none"});
+            }
+        }, 10);
     }
 
     /**
      * Отображение новых изображений, после загрузки/удаления изображений.
      * Все изображения текущей группы удаляются и загружаются вновь через ajax.
      */
-    refreshDisplayImg(result, group) {
+    refreshDisplayImg(allImage, group) {
         let container = $("[data-target='example-" + group + "']");
 
         container.nextUntil('.pencil-gallery').remove();
 
-        $(result).each(function (key, img) { // берем шаблон из html, заполняем его и дублируем в нужное место.
+        $(allImage).each(function (key, img) { // берем шаблон из html, заполняем его и дублируем в нужное место.
             let templateImg = $('[data-target="example-' + img.group + '"]');
             let instanceTemplateImg = templateImg.html()
                 .replace(/#{url-mini}/gi, img.mini)

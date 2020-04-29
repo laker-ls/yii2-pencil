@@ -4,6 +4,7 @@ namespace lakerLS\pencil\controllers;
 
 use Exception;
 use lakerLS\pencil\models\Image;
+use lakerLS\pencil\models\query\ImageQuery;
 use lakerLS\pencil\traits\AccessTrait;
 use lakerLS\pencil\helpers\PencilHelper;
 use Yii;
@@ -85,17 +86,22 @@ class ImageController extends Controller
                     Yii::$app->cache->flush();
                 }
             }
-            $result = Image::find()
+
+            $result['status'] = 'success';
+            $result['message'] = 'Изображения успешно загружены';
+            $result['images'] = Image::find()
                 ->where(['group' => $post['Image']['group']])
                 ->orderBy(['position' => SORT_DESC])
                 ->asArray()
                 ->all();
+
+            return json_encode($result);
         } else {
             $result['status'] = 'error';
             $result['message'] = 'Данные методом POST небыли получены. Обратитесь к разработчику.';
-        }
 
-        return json_encode($result);
+            return json_encode($result);
+        }
     }
 
     /**
@@ -112,10 +118,18 @@ class ImageController extends Controller
         $image = Image::findOne($id);
         unlink(mb_substr($image->full, 1));
         unlink(mb_substr($image->mini, 1));
-        $image->delete();
-        Yii::$app->cache->flush();
+        if (!$image->delete()) {
+            $result['status'] = 'error';
+            $result['message'] = $image->errors[0];
 
-        $result = Image::find()->where(['group' => $post['group']])->asArray()->orderBy(['position' => SORT_DESC])->all();
+            return json_encode($result);
+        }
+
+        Yii::$app->cache->flush();
+        $result['status'] = 'success';
+        $result['message'] = 'Изображение успешно удалено';
+        $result['images'] = ImageQuery::findByGroupAsArray($post['group']);
+
         return json_encode($result);
     }
 
@@ -127,8 +141,23 @@ class ImageController extends Controller
     {
         $post = Yii::$app->request->post();
 
-        $images = Image::deleteAll(['group' => $post['group']]);
+        $images = Image::findAll(['group' => $post['group']]);
+        foreach ($images as $image) {
+            if (!$image->delete()) {
+                Yii::$app->cache->flush();
+
+                $result['status'] = 'error';
+                $result['message'] = $image->errors[0];
+                $result['images'] = ImageQuery::findByGroupAsArray($post['group']);
+
+                return json_encode($result);
+            };
+        }
         Yii::$app->cache->flush();
+
+        $result['status'] = 'success';
+        $result['message'] = 'Все изображения успешно удалены';
+        $result['images'] = null;
 
         return json_encode($images);
     }
